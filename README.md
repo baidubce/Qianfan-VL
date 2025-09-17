@@ -96,15 +96,15 @@ Qianfan-VL模型系列是在企业级应用多模态大模型的场景中进行�
 | **InHouse Dataset A** | **59.87** | **71.78** | 26 | 43.40 | 40.64 | 41.47 |
 | **InHouse Dataset B** | **61.33** | **75.6** | 26.81 | 39.7 | 36.25 | 42.65 |
 
-## Quick Start
+## 快速开始
 
-### Installation
+### 安装依赖
 
 ```bash
 pip install transformers torch torchvision pillow
 ```
 
-### Using Transformers
+### 使用 Transformers
 
 ```python
 import torch
@@ -145,22 +145,22 @@ def dynamic_preprocess(image, min_num=1, max_num=12, image_size=448, use_thumbna
     orig_width, orig_height = image.size
     aspect_ratio = orig_width / orig_height
 
-    # calculate the existing image aspect ratio
+    # 计算现有图像的宽高比
     target_ratios = set(
         (i, j) for n in range(min_num, max_num + 1) for i in range(1, n + 1) for j in range(1, n + 1) if
         i * j <= max_num and i * j >= min_num)
     target_ratios = sorted(target_ratios, key=lambda x: x[0] * x[1])
 
-    # find the closest aspect ratio to the target
+    # 找到最接近目标的宽高比
     target_aspect_ratio = find_closest_aspect_ratio(
         aspect_ratio, target_ratios, orig_width, orig_height, image_size)
 
-    # calculate the target width and height
+    # 计算目标宽度和高度
     target_width = image_size * target_aspect_ratio[0]
     target_height = image_size * target_aspect_ratio[1]
     blocks = target_aspect_ratio[0] * target_aspect_ratio[1]
 
-    # resize the image
+    # 调整图像大小
     resized_img = image.resize((target_width, target_height))
     processed_images = []
     for i in range(blocks):
@@ -170,7 +170,7 @@ def dynamic_preprocess(image, min_num=1, max_num=12, image_size=448, use_thumbna
             ((i % (target_width // image_size)) + 1) * image_size,
             ((i // (target_width // image_size)) + 1) * image_size
         )
-        # split the image
+        # 分割图像
         split_img = resized_img.crop(box)
         processed_images.append(split_img)
     assert len(processed_images) == blocks
@@ -187,8 +187,8 @@ def load_image(image_file, input_size=448, max_num=12):
     pixel_values = torch.stack(pixel_values)
     return pixel_values
 
-# Load model
-MODEL_PATH = "Baidu/Qianfan-VL-8B"  # or Qianfan-VL-3B, Qianfan-VL-70B
+# 加载模型
+MODEL_PATH = "Baidu/Qianfan-VL-8B"  # 或选择 Qianfan-VL-3B, Qianfan-VL-70B
 model = AutoModel.from_pretrained(
     MODEL_PATH,
     torch_dtype=torch.bfloat16,
@@ -197,10 +197,10 @@ model = AutoModel.from_pretrained(
 ).eval()
 tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH, trust_remote_code=True)
 
-# Load and process image
+# 加载并处理图像
 pixel_values = load_image("./example/scene_ocr.png").to(torch.bfloat16)
 
-# Inference
+# 推理
 prompt = "<image>请识别图中所有文字"
 with torch.no_grad():
     response = model.chat(
@@ -213,11 +213,11 @@ with torch.no_grad():
 print(response)
 ```
 
-### Using vLLM
+### 使用 vLLM
 
-You can deploy Qianfan-VL using vLLM's official Docker image for high-performance inference with an OpenAI-compatible API:
+您可以使用 vLLM 的官方 Docker 镜像部署 Qianfan-VL，实现高性能推理和 OpenAI 兼容的 API：
 
-#### Start vLLM Service
+#### 启动 vLLM 服务
 
 ```bash
 docker run -d --name qianfan-vl \
@@ -232,7 +232,7 @@ docker run -d --name qianfan-vl \
   --hf-overrides '{"architectures":["InternVLChatModel"],"model_type":"internvl_chat"}'
 ```
 
-#### Call the API
+#### 调用 API
 
 ```bash
 curl 'http://127.0.0.1:8000/v1/chat/completions' \
