@@ -1,7 +1,7 @@
-# Qianfan-VL: 领域增强通用视觉-语言模型系列
+<h1 align="center">Qianfan-VL</h1>
 
 <p align="center">
-  <strong>通过持续预训练实现领域能力增强 | 3B到70B参数规模 | 文档理解与OCR能力增强 | 支持思考推理能力</strong>
+  <strong>领域增强多模态理解模型 | 3B到70B参数规模 | 文档理解与OCR能力增强 | 支持思考推理能力</strong>
 </p>
 
 <div align="center">
