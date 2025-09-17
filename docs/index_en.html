@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qianfan-VL: Domain-Enhanced General Vision-Language Model Series | Baidu AI Cloud Qianfan</title>
+    <meta name="description" content="Qianfan-VL Series: 3B to 70B parameter multimodal models focusing on document understanding, OCR enhancement, and reasoning capabilities">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
+    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        /* Override Prism theme for dark code blocks */
+        pre[class*="language-"],
+        code[class*="language-"] {
+            background: #1e1e1e !important;
+            color: #d4d4d4 !important;
+            text-shadow: none !important;
+            -webkit-font-smoothing: auto !important;
+            -moz-osx-font-smoothing: auto !important;
+        }
+        
+        :not(pre) > code[class*="language-"],
+        pre[class*="language-"] {
+            background: #1e1e1e !important;
+            text-shadow: none !important;
+        }
+        
+        /* Ensure all code blocks have dark background */
+        pre {
+            background: #1e1e1e !important;
+            border: 1px solid #3e3e42 !important;
+            text-shadow: none !important;
+        }
+        
+        pre code {
+            background: transparent !important;
+            color: #d4d4d4 !important;
+            text-shadow: none !important;
+            font-weight: normal !important;
+        }
+        
+        /* Remove any text shadows and backgrounds from tokens */
+        .token {
+            text-shadow: none !important;
+            background: transparent !important;
+        }
+        
+        /* Ensure operators have no background */
+        .token.operator {
+            background: transparent !important;
+        }
+        
+        /* New styles for core features section */
+        .core-feature {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            padding: 2rem;
+            color: white;
+            margin-bottom: 2rem;
+        }
+        
+        .core-feature h3 {
+            color: white;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+        
+        .tech-highlight {
+            background: #f8f9fa;
+            border-left: 4px solid #007bff;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+        }
+        
+        .capability-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+    </style>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tab switching functionality
+            const tabs = document.querySelectorAll('.capability-tab');
+            const panels = document.querySelectorAll('.capability-panel');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const targetTab = tab.dataset.tab;
+                    
+                    // Remove active class from all tabs and panels
+                    tabs.forEach(t => t.classList.remove('active'));
+                    panels.forEach(p => p.classList.remove('active'));
+                    
+                    // Add active class to clicked tab and corresponding panel
+                    tab.classList.add('active');
+                    document.getElementById(targetTab + '-panel').classList.add('active');
+                });
+            });
+            
+            // Code tab switching functionality
+            const codeTabs = document.querySelectorAll('.code-tab');
+            const codePanels = document.querySelectorAll('.code-panel');
+            
+            codeTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const targetTab = tab.dataset.tab;
+                    
+                    // Remove active class from all tabs and panels
+                    codeTabs.forEach(t => t.classList.remove('active'));
+                    codePanels.forEach(p => p.classList.remove('active'));
+                    
+                    // Add active class to clicked tab and corresponding panel
+                    tab.classList.add('active');
+                    document.getElementById(targetTab + '-panel').classList.add('active');
+                });
+            });
+            
+            // Carousel functionality
+            const carousels = document.querySelectorAll('.carousel-container');
+            
+            carousels.forEach(carousel => {
+                const track = carousel.querySelector('.carousel-track');
+                const cards = track.querySelectorAll('.capability-card');
+                const prevBtn = carousel.querySelector('.carousel-prev');
+                const nextBtn = carousel.querySelector('.carousel-next');
+                
+                let currentIndex = 0;
+                const cardWidth = 520; // Card width (500px) + gap (20px)
+                const visibleCards = Math.floor(carousel.offsetWidth / cardWidth);
+                const maxIndex = Math.max(0, cards.length - visibleCards);
+                
+                function updateCarousel() {
+                    const offset = -currentIndex * cardWidth;
+                    track.style.transform = `translateX(${offset}px)`;
+                    
+                    // Update button states
+                    prevBtn.disabled = currentIndex === 0;
+                    nextBtn.disabled = currentIndex >= maxIndex;
+                }
+                
+                prevBtn.addEventListener('click', () => {
+                    if (currentIndex > 0) {
+                        currentIndex--;
+                        updateCarousel();
+                    }
+                });
+                
+                nextBtn.addEventListener('click', () => {
+                    if (currentIndex < maxIndex) {
+                        currentIndex++;
+                        updateCarousel();
+                    }
+                });
+                
+                // Initialize carousel
+                updateCarousel();
+                
+                // Update on window resize
+                window.addEventListener('resize', () => {
+                    const newVisibleCards = Math.floor(carousel.offsetWidth / cardWidth);
+                    const newMaxIndex = Math.max(0, cards.length - newVisibleCards);
+                    if (currentIndex > newMaxIndex) {
+                        currentIndex = newMaxIndex;
+                    }
+                    updateCarousel();
+                });
+            });
+            
+            // Image modal functionality
+            const showcaseImages = document.querySelectorAll('.showcase-image img');
+            const modal = document.createElement('div');
+            modal.className = 'image-modal';
+            modal.innerHTML = `
+                <span class="image-modal-close">&times;</span>
+                <div class="image-modal-content">
+                    <img src="" alt="">
+                </div>
+            `;
+            document.body.appendChild(modal);
+            
+            const modalImg = modal.querySelector('.image-modal-content img');
+            const closeBtn = modal.querySelector('.image-modal-close');
+            
+            showcaseImages.forEach(img => {
+                img.addEventListener('click', () => {
+                    modal.style.display = 'block';
+                    modalImg.src = img.src;
+                    modalImg.alt = img.alt;
+                });
+            });
+            
+            closeBtn.addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
+            
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="hero-section">
+                <h2 class="hero-title" style="margin: 0 0 1.5rem 0; text-align: center;">Qianfan-VL: Domain-Enhanced Universal Vision-Language Models</h2>
+                <p class="hero-subtitle">Domain Capability Enhancement through Continuous Pre-training | 3B to 70B Parameter Scale | Document Understanding & OCR Enhancement | Reasoning Capability Support</p>
+                <p class="hero-meta">Released August 2025 | Baidu AI Cloud Qianfan Large Model Platform</p>
+            </div>
+
+            <!-- Table of Contents -->
+            <section class="table-of-contents section" style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0;">
+                <h2 style="font-size: 1.3rem; margin-bottom: 1rem;">Table of Contents</h2>
+                <div style="display: flex; flex-wrap: wrap; gap: 2rem; font-size: 0.9rem; line-height: 1.6;">
+                    <div style="flex: 1; min-width: 280px;">
+                        <div style="margin-bottom: 0.8rem;">
+                            <strong><a href="#core-features" style="color: var(--text-primary);">1. Core Features</a></strong>
+                            <div style="margin-left: 1rem; margin-top: 0.3rem; color: #666;">
+                                <a href="#multi-scale-models" style="color: inherit; text-decoration: none;">1.1 Multi-Scale Models</a><br>
+                                <a href="#ocr-document" style="color: inherit; text-decoration: none;">1.2 OCR & Document Understanding</a><br>
+                                <a href="#chain-reasoning" style="color: inherit; text-decoration: none;">1.3 Chain-of-Thought Reasoning</a>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 0.8rem;">
+                            <strong><a href="#tech-highlights" style="color: var(--text-primary);">2. Architecture & Technical Features</a></strong>
+                            <div style="margin-left: 1rem; margin-top: 0.3rem; color: #666;">
+                                <a href="#overall-architecture" style="color: inherit; text-decoration: none;">2.1 Overall Architecture</a><br>
+                                <a href="#tech-innovation" style="color: inherit; text-decoration: none;">2.2 Technical Innovation</a>
+                                <div style="margin-left: 1rem; font-size: 0.85rem;">
+                                    <a href="#training-pipeline" style="color: inherit; text-decoration: none;">• Training Pipeline</a><br>
+                                    <a href="#data-synthesis" style="color: inherit; text-decoration: none;">• Data Synthesis</a><br>
+                                    <a href="#kunlun-training" style="color: inherit; text-decoration: none;">• Kunlun Chip Training</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="flex: 1; min-width: 280px;">
+                        <div style="margin-bottom: 0.8rem;">
+                            <strong><a href="#applications" style="color: var(--text-primary);">3. Scenario Case Studies</a></strong>
+                            <div style="margin-left: 1rem; margin-top: 0.3rem; color: #666;">
+                                <a href="#ocr-cases" style="color: inherit; text-decoration: none;">3.1 OCR Recognition</a><br>
+                                <a href="#math-cases" style="color: inherit; text-decoration: none;">3.2 Mathematical Reasoning</a><br>
+                                <a href="#doc-cases" style="color: inherit; text-decoration: none;">3.3 Document Understanding</a><br>
+                                <a href="#chart-cases" style="color: inherit; text-decoration: none;">3.4 Chart Analysis</a><br>
+                                <a href="#video-cases" style="color: inherit; text-decoration: none;">3.5 Video Understanding</a>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 0.8rem;">
+                            <strong><a href="#api" style="color: var(--text-primary);">4. Quick Start</a></strong>
+                            <div style="margin-left: 1rem; margin-top: 0.3rem; color: #666;">
+                                <a href="#examples" style="color: inherit; text-decoration: none;">4.1 Example Code</a><br>
+                                <a href="#api-params" style="color: inherit; text-decoration: none;">4.2 API Parameters</a>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <strong><a href="#conclusion" style="color: var(--text-primary);">5. Summary</a></strong>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="core-features" class="section">
+                <h2>Core Features</h2>
+                <p class="section-intro">
+                    The Qianfan-VL model series is a general-purpose multimodal large model enhanced for enterprise-level multimodal applications. It possesses fundamental general capabilities while offering deep optimization for high-frequency scenarios in industrial deployment. Through three core functions, it precisely meets multimodal understanding needs in different scenarios.
+                </p>
+
+                <!-- Three-column horizontal layout -->
+                <div class="core-features-grid">
+                    <!-- Core Feature 1: Multi-scale Models -->
+                    <div class="core-feature-column">
+                        <h3>Multi-Scale Models</h3>
+                        <p>Provides 3B, 8B, and 70B model variants to meet different scenario requirements</p>
+                    </div>
+
+                    <!-- Core Feature 2: OCR & Document Understanding Enhancement -->
+                    <div class="core-feature-column">
+                        <h3>OCR & Document Understanding Enhancement</h3>
+                        <p>Full-scenario OCR recognition and intelligent understanding capabilities, covering documents, natural scenes, and various application scenarios</p>
+                    </div>
+
+                    <!-- Core Feature 3: Chain-of-Thought Reasoning Capability -->
+                    <div class="core-feature-column">
+                        <h3>Chain-of-Thought Reasoning Capability</h3>
+                        <p>Supports chain-of-thought capabilities, demonstrating excellent performance in complex scenarios like mathematics and reasoning calculations</p>
+                    </div>
+                </div>
+
+                <!-- Detailed expanded content -->
+                <div class="core-features-details">
+                    <!-- Multi-scale Model Details -->
+                    <div id="multi-scale-models" class="core-feature-detail">
+                        <h3>Multi-Scale Models Meet Different Scenario Requirements</h3>
+                        <p>Provides 3B, 8B, and 70B model variants, allowing enterprises and developers of different scales to find suitable solutions</p>
+                        <div class="table-wrapper" style="margin-top: 1.5rem;">
+                            <table class="benchmark-table">
+                                <thead>
+                                    <tr>
+                                        <th>Model Name</th>
+                                        <th>Context Length</th>
+                                        <th>Reasoning Support</th>
+                                        <th>Application Scenarios</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Qianfan-VL-3B</strong></td>
+                                        <td>32k</td>
+                                        <td>Not Supported</td>
+                                        <td>Edge real-time scenarios, OCR text recognition</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Qianfan-VL-8B</strong></td>
+                                        <td>32k</td>
+                                        <td>Supported</td>
+                                        <td>Server-side general scenarios, fine-tuning optimization scenarios</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Qianfan-VL-70B</strong></td>
+                                        <td>32k</td>
+                                        <td>Supported</td>
+                                        <td>Offline data synthesis, complex reasoning computation scenarios</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- General Capability Benchmark Performance -->
+                        <div style="margin-top: 2rem;">
+                            <h4>General Capability Benchmark Performance</h4>
+                            <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem;">
+                                Comprehensive comparison of Qianfan-VL models of all scales with mainstream models on standard multimodal benchmarks
+                            </p>
+                            
+                            <div class="table-wrapper">
+                                <table class="benchmark-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Benchmark</th>
+                                            <th>Qianfan-VL-3B</th>
+                                            <th>Qianfan-VL-8B</th>
+                                            <th>Qianfan-VL-70B</th>
+                                            <th>Intern3-VL-8B</th>
+                                            <th>Intern3-VL-78B</th>
+                                            <th>Qwen2.5-VL-7B</th>
+                                            <th>Qwen2.5-VL-72B</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>A-Bench_VAL</td>
+                                            <td>75.65</td>
+                                            <td>75.72</td>
+                                            <td><strong>78.1</strong></td>
+                                            <td>75.86</td>
+                                            <td>75.86</td>
+                                            <td>76.49</td>
+                                            <td><strong>79.22</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td>CCBench</td>
+                                            <td>66.86</td>
+                                            <td>70.39</td>
+                                            <td><strong>80.98</strong></td>
+                                            <td>77.84</td>
+                                            <td>70.78</td>
+                                            <td>57.65</td>
+                                            <td>73.73</td>
+                                        </tr>
+                                        <tr>
+                                            <td>SEEDBench_IMG</td>
+                                            <td>76.55</td>
+                                            <td>78.02</td>
+                                            <td><strong>79.13</strong></td>
+                                            <td>77.00</td>
+                                            <td>77.52</td>
+                                            <td>76.98</td>
+                                            <td><strong>78.34</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td>SEEDBench2_Plus</td>
+                                            <td>67.59</td>
+                                            <td>70.97</td>
+                                            <td><strong>73.17</strong></td>
+                                            <td>69.52</td>
+                                            <td>68.47</td>
+                                            <td>70.93</td>
+                                            <td><strong>73.25</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td>MMVet</td>
+                                            <td>48.17</td>
+                                            <td>53.21</td>
+                                            <td>57.34</td>
+                                            <td><strong>80.28</strong></td>
+                                            <td><strong>78.90</strong></td>
+                                            <td>70.64</td>
+                                            <td>75.69</td>
+                                        </tr>
+                                        <tr>
+                                            <td>MMMU_VAL</td>
+                                            <td>46.44</td>
+                                            <td>47.11</td>
+                                            <td>58.33</td>
+                                            <td>56.11</td>
+                                            <td><strong>60.78</strong></td>
+                                            <td>51.0</td>
+                                            <td><strong>65.78</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td>ScienceQA_TEST</td>
+                                            <td>95.19</td>
+                                            <td>97.62</td>
+                                            <td><strong>98.76</strong></td>
+                                            <td>97.97</td>
+                                            <td>97.17</td>
+                                            <td>85.47</td>
+                                            <td>92.51</td>
+                                        </tr>
+                                        <tr>
+                                            <td>ScienceQA_VAL</td>
+                                            <td>93.85</td>
+                                            <td>97.62</td>
+                                            <td><strong>98.81</strong></td>
+                                            <td><strong>97.81</strong></td>
+                                            <td>95.14</td>
+                                            <td>83.59</td>
+                                            <td>91.32</td>
+                                        </tr>
+                                        <tr>
+                                            <td>MMT-Bench_VAL</td>
+                                            <td>62.23</td>
+                                            <td>63.22</td>
+                                            <td><strong>71.06</strong></td>
+                                            <td>65.17</td>
+                                            <td>63.67</td>
+                                            <td>61.40</td>
+                                            <td><strong>69.49</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td>MTVQA_TEST</td>
+                                            <td>26.5</td>
+                                            <td>30.14</td>
+                                            <td><strong>32.18</strong></td>
+                                            <td>30.30</td>
+                                            <td>27.62</td>
+                                            <td>29.08</td>
+                                            <td><strong>31.48</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td>BLINK</td>
+                                            <td>49.97</td>
+                                            <td>56.81</td>
+                                            <td><strong>59.44</strong></td>
+                                            <td>55.87</td>
+                                            <td>51.87</td>
+                                            <td>54.55</td>
+                                            <td><strong>63.02</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td>MMStar</td>
+                                            <td>57.93</td>
+                                            <td>64.07</td>
+                                            <td><strong>69.47</strong></td>
+                                            <td><strong>68.40</strong></td>
+                                            <td>66.07</td>
+                                            <td>61.53</td>
+                                            <td>66.00</td>
+                                        </tr>
+                                        <tr>
+                                            <td>RealWorldQA</td>
+                                            <td>65.75</td>
+                                            <td>70.59</td>
+                                            <td>71.63</td>
+                                            <td>71.11</td>
+                                            <td><strong>74.25</strong></td>
+                                            <td>69.28</td>
+                                            <td>73.86</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Q-Bench1_VAL</td>
+                                            <td>73.51</td>
+                                            <td>75.25</td>
+                                            <td>77.46</td>
+                                            <td>75.99</td>
+                                            <td>77.99</td>
+                                            <td>78.10</td>
+                                            <td><strong>79.93</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td>POPE</td>
+                                            <td>85.08</td>
+                                            <td>86.06</td>
+                                            <td>88.97</td>
+                                            <td><strong>90.59</strong></td>
+                                            <td>88.87</td>
+                                            <td>85.97</td>
+                                            <td>83.35</td>
+                                        </tr>
+                                        <tr>
+                                            <td>RefCOCO (Avg)</td>
+                                            <td>85.94</td>
+                                            <td>89.37</td>
+                                            <td><strong>91.01</strong></td>
+                                            <td>89.65</td>
+                                            <td><strong>91.40</strong></td>
+                                            <td>86.56</td>
+                                            <td>90.25</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- OCR & Document Understanding Capability Details -->
+                    <div id="ocr-document" class="core-feature-detail">
+                        <h3>OCR & Document Understanding Enhancement</h3>
+                        <p>Focuses on two distinctive capabilities: full-scenario OCR recognition and complex layout document understanding, demonstrating excellent performance in multiple benchmark tests and providing high-precision visual understanding solutions for enterprise-level applications</p>
+                        
+                        <div class="feature-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem;">
+                            <div style="padding: 0.75rem;">
+                                <h4>Full-Scenario OCR Tasks</h4>
+                                <ul>
+                                    <li><strong>Handwriting Recognition:</strong> Chinese and English handwriting recognition, supporting various fonts like cursive and regular script</li>
+                                    <li><strong>Formula Recognition:</strong> Precise mathematical formula recognition and conversion to LaTeX format</li>
+                                    <li><strong>Natural Scene Text Recognition:</strong> Text detection in complex environments like street views, signs, and markers</li>
+                                    <li><strong>Card/Document Information Extraction:</strong> Structured information extraction from ID cards, driver's licenses, business licenses, etc.</li>
+                                </ul>
+                            </div>
+                            <div style="padding: 0.75rem;">
+                                <h4>Complex Layout Document Understanding</h4>
+                                <ul>
+                                    <li><strong>Layout Analysis:</strong> Automatic recognition of layout elements like titles, paragraphs, charts, and tables</li>
+                                    <li><strong>Table Understanding:</strong> Complex table structure parsing, supporting merged cells and multi-level headers</li>
+                                    <li><strong>Chart Understanding:</strong> Data extraction and analysis of bar charts, line charts, pie charts, etc.</li>
+                                    <li><strong>Document Q&A:</strong> Intelligent question answering and information retrieval based on document content</li>
+                                    <li><strong>Document Parsing:</strong> Structured parsing of PDF, Word, and other format documents</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div style="padding: 0.75rem; margin-top: 1rem;">
+                            <h4>OCR & Document Understanding Benchmark Performance</h4>
+                            <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem;">
+                                Comprehensive comparison of Qianfan-VL models of all scales with mainstream models on OCR and document understanding professional benchmarks
+                            </p>
+                            
+                            <div class="table-wrapper">
+                                <table class="benchmark-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Benchmark</th>
+                                            <th>Qianfan-VL-3B</th>
+                                            <th>Qianfan-VL-8B</th>
+                                            <th>Qianfan-VL-70B</th>
+                                            <th>Qwen2.5-VL-3B</th>
+                                            <th>Intern3-VL-8B</th>
+                                            <th>Intern3-VL-78B</th>
+                                            <th>Qwen2.5-VL-7B</th>
+                                            <th>Qwen2.5-VL-72B</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>OCRBench</td>
+                                            <td>831</td>
+                                            <td>854</td>
+                                            <td>873</td>
+                                            <td>810</td>
+                                            <td><strong>881</strong></td>
+                                            <td>847</td>
+                                            <td><strong>883</strong></td>
+                                            <td>874</td>
+                                        </tr>
+                                        <tr>
+                                            <td>AI2D_TEST</td>
+                                            <td>81.38</td>
+                                            <td><strong>85.07</strong></td>
+                                            <td><strong>87.73</strong></td>
+                                            <td>77.07</td>
+                                            <td><strong>85.07</strong></td>
+                                            <td>83.55</td>
+                                            <td>80.472</td>
+                                            <td>83.84</td>
+                                        </tr>
+                                        <tr>
+                                            <td>OCRVQA_TEST</td>
+                                            <td>66.15</td>
+                                            <td>68.98</td>
+                                            <td><strong>74.06</strong></td>
+                                            <td>69.24</td>
+                                            <td>39.03</td>
+                                            <td>35.58</td>
+                                            <td><strong>71.02</strong></td>
+                                            <td>66.8</td>
+                                        </tr>
+                                        <tr>
+                                            <td>TextVQA_VAL</td>
+                                            <td>80.11</td>
+                                            <td>82.13</td>
+                                            <td><strong>84.48</strong></td>
+                                            <td>79.09</td>
+                                            <td>82.15</td>
+                                            <td>83.52</td>
+                                            <td><strong>84.962</strong></td>
+                                            <td>83.26</td>
+                                        </tr>
+                                        <tr>
+                                            <td>DocVQA_VAL</td>
+                                            <td>90.85</td>
+                                            <td>93.54</td>
+                                            <td>94.75</td>
+                                            <td>92.71</td>
+                                            <td>92.04</td>
+                                            <td>83.82</td>
+                                            <td><strong>94.91</strong></td>
+                                            <td><strong>95.75</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td>ChartQA_TEST</td>
+                                            <td>81.79</td>
+                                            <td><strong>87.72</strong></td>
+                                            <td><strong>89.6</strong></td>
+                                            <td>83.4</td>
+                                            <td>85.76</td>
+                                            <td>82.04</td>
+                                            <td>86.68</td>
+                                            <td>87.16</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                        </div>
+                    </div>
+
+                    <!-- Chain-of-Thought Reasoning Capability Details -->
+                    <div id="chain-reasoning" class="core-feature-detail">
+                        <h3>Chain-of-Thought Reasoning Capability</h3>
+                        <p>8B and 70B models support chain-of-thought capability activation through special tokens, covering complex chart understanding, visual reasoning, mathematical problem-solving, and more scenarios. These tasks typically require combinatorial reasoning based on visual information and external knowledge. We synthesized extensive visual/textual reasoning data and integrated it into Qianfan-VL's post-training, significantly improving performance on reasoning and computation-related tasks as shown by benchmark results</p>
+                        
+                        <div class="reasoning-features">
+                            <div style="padding: 0.75rem; margin-top: 1rem;">
+                                <h4>Core Reasoning Application Scenarios</h4>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.5rem;">
+                                    <div>
+                                        <h5>Complex Chart Understanding & Reasoning</h5>
+                                        <ul>
+                                            <li><strong>Data Analysis:</strong> Extract key information from complex charts for reasoning analysis</li>
+                                            <li><strong>Trend Prediction:</strong> Trend judgment and prediction based on historical data charts</li>
+                                            <li><strong>Correlation Reasoning:</strong> Cross-analysis and correlation reasoning of multi-chart data</li>
+                                            <li><strong>Statistical Computation:</strong> Statistical analysis and quantitative calculation of chart data</li>
+                                        </ul>
+                                    </div>
+                                    <div>
+                                        <h5>Mathematical Problem-Solving & Visual Reasoning</h5>
+                                        <ul>
+                                            <li><strong>Geometric Reasoning:</strong> Spatial figure relationship understanding and theorem application</li>
+                                            <li><strong>Formula Recognition:</strong> Precise recognition and understanding of complex mathematical formulas</li>
+                                            <li><strong>Step-by-step Solution:</strong> Clear problem-solving process and step presentation</li>
+                                            <li><strong>Logical Inference:</strong> Logic reasoning and problem-solving based on visual cues</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div style="padding: 0.75rem; margin-top: 1rem;">
+                                <h4>Mathematical Problem-Solving Benchmark Performance</h4>
+                                <div class="table-wrapper" style="margin-top: 0.5rem;">
+                                    <table class="benchmark-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Benchmark</th>
+                                                <th>Qianfan-VL-8B</th>
+                                                <th>Qianfan-VL-70B</th>
+                                                <th>Intern3-VL-8B</th>
+                                                <th>Intern3-VL-78B</th>
+                                                <th>Qwen2.5-VL-7B</th>
+                                                <th>Qwen2.5-VL-72B</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Mathvista-mini</td>
+                                                <td>69.19</td>
+                                                <td><strong>78.6</strong></td>
+                                                <td>69.5</td>
+                                                <td>71.1</td>
+                                                <td>69.5</td>
+                                                <td>70.1</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Mathvision</td>
+                                                <td>32.82</td>
+                                                <td><strong>50.29</strong></td>
+                                                <td>21.48</td>
+                                                <td>33.48</td>
+                                                <td>29.61</td>
+                                                <td>34.8</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Mathverse</td>
+                                                <td>48.4</td>
+                                                <td><strong>61.04</strong></td>
+                                                <td>30.96</td>
+                                                <td>43.32</td>
+                                                <td>43.68</td>
+                                                <td>49.26</td>
+                                            </tr>
+                                            <tr>
+                                                <td>ChartQA Pro</td>
+                                                <td>50.41</td>
+                                                <td><strong>52</strong></td>
+                                                <td>19.38</td>
+                                                <td>47.92</td>
+                                                <td>37.32</td>
+                                                <td>44.43</td>
+                                            </tr>
+                                            <tr>
+                                                <td>HallusionBench</td>
+                                                <td>51.72</td>
+                                                <td><strong>54.52</strong></td>
+                                                <td>49.7</td>
+                                                <td>40.5</td>
+                                                <td>49.2</td>
+                                                <td>40.2</td>
+                                            </tr>
+                                            <tr>
+                                                <td>InHouse Dataset A</td>
+                                                <td>59.87</td>
+                                                <td><strong>71.78</strong></td>
+                                                <td>26</td>
+                                                <td>43.40</td>
+                                                <td>40.64</td>
+                                                <td>41.47</td>
+                                            </tr>
+                                            <tr>
+                                                <td>InHouse Dataset B</td>
+                                                <td>61.33</td>
+                                                <td><strong>75.6</strong></td>
+                                                <td>26.81</td>
+                                                <td>39.7</td>
+                                                <td>36.25</td>
+                                                <td>42.65</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tech-highlights" class="section">
+                <h2>Model Architecture Design & Technical Features</h2>
+                <p class="section-intro">
+                    Through advanced multimodal architecture design and three major technical innovations, Qianfan-VL achieves domain-enhanced general vision-language capabilities
+                </p>
+
+                <!-- Architecture Overview -->
+                <div id="overall-architecture" class="architecture-overview" style="margin: 2rem 0;">
+                    <h3>Overall Architecture</h3>
+                    <div style="text-align: center; margin: 1.5rem 0;">
+                        <img src="images/qianfan_vl_arch_professional.svg" alt="Qianfan-VL Architecture" class="architecture-image">
+                    </div>
+                    <p style="text-align: center; color: #666; font-size: 0.9rem;">
+                        Qianfan-VL adopts advanced multimodal architecture, integrating industry best practices and autonomous innovations
+                    </p>
+                    
+                    <!-- Architecture Component Description -->
+                    <div class="architecture-details" style="margin: 2rem 0;">
+                        <h4>Core Architecture Components</h4>
+                        <div class="feature-grid">
+                            <div class="feature-card">
+                                <h5>Language Model</h5>
+                                <p>Based on Llama 3.1 architecture, enhanced through vocabulary expansion and localization with 3T Chinese-English corpus, supporting mixed Chinese-English understanding</p>
+                            </div>
+                            <div class="feature-card">
+                                <h5>Vision Encoder</h5>
+                                <p>Initialized with InternViT, supporting dynamic patching for different resolution images, with maximum support for 4K resolution input</p>
+                            </div>
+                            <div class="feature-card">
+                                <h5>Cross-modal Fusion</h5>
+                                <p>MLP adapter achieves seamless bridging between vision and language modalities, ensuring accuracy and efficiency of information transfer</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Technical Innovation & Features -->
+                <h3 id="tech-innovation">Technical Innovation & Features</h3>
+                
+                <!-- Three-column horizontal layout - Technical Innovation Features -->
+                <div class="tech-highlights-grid">
+                    <!-- Technical Feature 1: Capability Enhancement Training Pipeline -->
+                    <div class="tech-highlight-column">
+                        <h3>Capability Enhancement Training Pipeline</h3>
+                        <p>Innovative four-stage training strategy that significantly enhances domain capabilities while maintaining general capabilities</p>
+                    </div>
+
+                    <!-- Technical Feature 2: High-Precision Data Synthesis Technology -->
+                    <div class="tech-highlight-column">
+                        <h3>High-Precision Data Synthesis Technology</h3>
+                        <p>Combines traditional CV models with programmatic generation to efficiently construct high-quality training data</p>
+                    </div>
+
+                    <!-- Technical Feature 3: Large-Scale Kunlun Chip Training -->
+                    <div class="tech-highlight-column">
+                        <h3>Large-Scale Kunlun Chip Training</h3>
+                        <p>Completed training entirely using Baidu's self-developed Kunlun P800 chips, demonstrating the mature capabilities of domestic AI infrastructure</p>
+                    </div>
+                </div>
+
+                <!-- Detailed Technical Innovation Description -->
+                <div class="tech-highlights-details">
+                    <!-- Technical Feature 1: Capability Enhancement Training Pipeline -->
+                    <div id="training-pipeline" class="tech-highlight-detail">
+                        <h3>Capability Enhancement Training Pipeline</h3>
+                        <p>Innovative four-stage progressive training strategy that significantly enhances domain capabilities while maintaining general capabilities</p>
+                        
+                        <!-- Training Pipeline Diagram -->
+                        <div style="text-align: center; margin: 2rem 0;">
+                            <img src="images/training_pipeline_professional.svg" alt="Qianfan-VL Training Pipeline" class="architecture-image" style="max-width: 100%; height: auto;">
+                        </div>
+                        
+                        <div class="training-stages" style="margin-top: 2rem;">
+                            <p><strong>Stage 1: Cross-modal Alignment</strong> - This stage aims to establish basic vision-language connection mapping, using a training strategy that only updates MLP Adapter while freezing Vision Encoder and LLM, trained with 100B tokens of general knowledge data. This stage is necessary, otherwise it will affect overall performance.</p>
+                            
+                            <p><strong>Stage 2: General Knowledge Injection</strong> - Focusing on the amount of injected data, trying to cover all training data, using full-parameter update training strategy with 2.66T tokens of general knowledge data. This stage builds the model's strong foundational capabilities while including sufficient proportion of text corpus to prevent catastrophic forgetting of LLM knowledge.</p>
+                            
+                            <p><strong>Stage 3: Domain-Enhanced Knowledge Injection</strong> - Carefully selecting high-quality data for domains to be enhanced, including task data for enhanced domains while integrating general data sampling to maintain general knowledge and prevent catastrophic forgetting, using full-parameter update training with 0.32T tokens of domain-specific data and general sampled data. This stage achieves significant enhancement of professional capabilities.</p>
+                            
+                            <p><strong>Stage 4: Post-training</strong> - This stage aims to improve instruction following ability and preference alignment, using full-parameter update training strategy with 1B tokens of instruction fine-tuning data. Uses high-quality alignment data including complex instruction following, writing, Q&A, programming, OCR, information extraction, mathematics, reasoning computation tasks, while incorporating sufficient pure text instruction fine-tuning data to maintain text model capabilities.</p>
+                        </div>
+                    </div>
+
+                    <!-- Technical Feature 2: High-Precision Data Synthesis Technology -->
+                    <div id="data-synthesis" class="tech-highlight-detail">
+                        <h3>High-Precision Data Synthesis Technology</h3>
+                        <p>Constructs a data synthesis pipeline for multimodal tasks, covering core tasks such as document recognition, mathematical problem solving, chart understanding, table recognition, formula recognition, and natural scene OCR. Through refined pipeline design and intermediate process data construction, it achieves efficient production of high-quality training data</p>
+                        
+                        <!-- Multi-task Data Synthesis Pipeline -->
+                        <div style="margin-top: 2rem;">
+                            <h4>Multi-task Data Synthesis Pipeline</h4>
+                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 1rem;">
+                                <div style="background: #fafafa; padding: 1.5rem; border-radius: 8px;">
+                                    <h5>Document Recognition OCR Pipeline</h5>
+                                    <div style="font-size: 0.85rem; margin-bottom: 1rem; color: #555;">
+                                        <strong>Core Tasks:</strong> Comprehensive analysis, image-to-Markdown, and document Q&A
+                                    </div>
+                                    <ul style="font-size: 0.9rem;"><li><strong>Comprehensive Analysis:</strong> Multi-dimensional analysis integrating layout, category, and content, supporting multiple languages and handwritten scanned documents</li>
+                                        <li><strong>Image-to-Markdown:</strong> Efficient conversion of single/multi-page documents to structured Markdown</li>
+                                        <li><strong>Document Q&A:</strong> Deep understanding supporting summarization, reasoning, and multi-turn dialogue</li>
+                                    </ul>
+                                </div>
+                                
+                                <div style="background: #fafafa; padding: 1.5rem; border-radius: 8px;">
+                                    <h5>Mathematical Problem Solving OCR Pipeline</h5>
+                                    <div style="font-size: 0.85rem; margin-bottom: 1rem; color: #555;">
+                                        <strong>Core Advantages:</strong> Customized educational data construction + enhanced visual mathematical reasoning
+                                    </div>
+                                    <ul style="font-size: 0.9rem;"><li><strong>Educational Data Preprocessing:</strong> Collect multilingual high-quality problem-solving data, standardize terminology and symbols, structure problems/conditions/steps/formulas</li>
+                                        <li><strong>Problem-Solving Data Synthesis:</strong> Combine knowledge systems to synthesize photo problem-solving scenario data through structured expression→LaTeX→HTML→image pipeline</li>
+                                        <li><strong>Visual Extraction Enhancement:</strong> For complex scenarios like charts, formulas, and geometry, construct high-quality data through formal description languages combined with HTML rendering</li>
+                                    </ul>
+                                </div>
+                                
+                                <div style="background: #fafafa; padding: 1.5rem; border-radius: 8px;">
+                                    <h5>Chart Understanding Pipeline</h5>
+                                    <div style="font-size: 0.85rem; margin-bottom: 1rem; color: #555;">
+                                        <strong>Core Objective:</strong> Generate high-quality chart Q&A pairs covering data retrieval, visual attributes, and computational Q&A
+                                    </div>
+                                    <ul style="font-size: 0.9rem;"><li><strong>Data Expansion:</strong> Open source dataset sampling + Baidu Image Search API expansion + deduplication processing</li>
+                                        <li><strong>Chart Summary:</strong> Pre-trained VLM generates structured summaries containing visual and numerical information</li>
+                                        <li><strong>Two-stage Generation:</strong> Generate questions based on summaries → Generate answers based on questions and summaries</li>
+                                    </ul>
+                                </div>
+                                
+                                <div style="background: #fafafa; padding: 1.5rem; border-radius: 8px;">
+                                    <h5>Table Recognition Pipeline</h5>
+                                    <div style="font-size: 0.85rem; margin-bottom: 1rem; color: #555;">
+                                        <strong>Core Tasks:</strong> Table structure recognition and table Q&A
+                                    </div>
+                                    <ul style="font-size: 0.9rem;"><li><strong>Table Structuring:</strong> Precise recovery of image tables to HTML/LaTeX, supporting complex layouts like borderless tables and contract tables</li>
+                                        <li><strong>Table Q&A:</strong> Numerical computation, comparative analysis, and information retrieval based on table images</li>
+                                        <li><strong>Content Generation:</strong> Random table structure + Faker library/LLM filling + random cell merging with professional CSS theme rendering</li>
+                                    </ul>
+                                </div>
+                                
+                                <div style="background: #fafafa; padding: 1.5rem; border-radius: 8px;">
+                                    <h5>Formula Recognition Pipeline</h5>
+                                    <div style="font-size: 0.85rem; margin-bottom: 1rem; color: #555;">
+                                        <strong>Core Capabilities:</strong> Integrated symbol recognition + syntax parsing + semantic understanding
+                                    </div>
+                                    <ul style="font-size: 0.9rem;"><li><strong>Symbol Recognition:</strong> Precise recognition of mathematical symbols, Greek letters, and special notations</li>
+                                        <li><strong>Structure Parsing:</strong> Complex structures like fractions, radicals, superscripts/subscripts, matrices</li>
+                                        <li><strong>Multi-engine Rendering:</strong> MathJax/KaTeX ensuring rendering consistency</li>
+                                    </ul>
+                                </div>
+                                
+                                <div style="background: #fafafa; padding: 1.5rem; border-radius: 8px;">
+                                    <h5>Natural Scene OCR Pipeline</h5>
+                                    <div style="font-size: 0.85rem; margin-bottom: 1rem; color: #555;">
+                                        <strong>Core Innovation:</strong> Synthtext-pipeline systematic text image synthesis method
+                                    </div>
+                                    <ul style="font-size: 0.9rem;"><li><strong>Background Filtering:</strong> Lightweight OCR model + image type detection to exclude samples with text/non-static content</li>
+                                        <li><strong>Scene Understanding:</strong> Semantic segmentation model + monocular depth estimation for region division and 3D structure</li>
+                                        <li><strong>Real Projection:</strong> Plane detection + perspective projection + random text style natural projection</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Technical Feature 3: Large-Scale Kunlun Chip Parallel Training -->
+                    <div id="kunlun-training" class="tech-highlight-detail">
+                        <h3>Large-Scale Kunlun Chip Parallel Training</h3>
+                        <p>Based on Baidu's self-developed Kunlun P800 chips, constructed an industry-leading ultra-large-scale distributed training system, achieving efficient training through innovative parallel strategies and operator optimization</p>
+                        
+                        <!-- Cluster Scale and Data Scale -->
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-top: 2rem;">
+                            <div style="background: #f5f5f5; padding: 0.75rem 1.5rem; border-radius: 8px; text-align: center;">
+                                <h4 style="margin-bottom: 0.25rem; font-size: 1rem;">Cluster Scale</h4>
+                                <div style="font-size: 1.75rem; font-weight: bold; color: #007bff; margin: 0.25rem 0;">5000+</div>
+                                <div style="margin-top: 0.25rem; font-size: 0.9rem;">Kunlun P800 Parallel</div>
+                            </div>
+                            <div style="background: #f5f5f5; padding: 0.75rem 1.5rem; border-radius: 8px; text-align: center;">
+                                <h4 style="margin-bottom: 0.25rem; font-size: 1rem;">Training Data Scale</h4>
+                                <div style="font-size: 1.75rem; font-weight: bold; color: #28a745; margin: 0.25rem 0;">3T</div>
+                                <div style="margin-top: 0.25rem; font-size: 0.9rem;">Token Training Data</div>
+                            </div>
+                            <div style="background: #f5f5f5; padding: 0.75rem 1.5rem; border-radius: 8px; text-align: center;">
+                                <h4 style="margin-bottom: 0.25rem; font-size: 1rem;">Scaling Efficiency</h4>
+                                <div style="font-size: 1.75rem; font-weight: bold; color: #6f42c1; margin: 0.25rem 0;">90%+</div>
+                                <div style="margin-top: 0.25rem; font-size: 0.9rem;">Large-scale cluster scaling efficiency</div>
+                            </div>
+                        </div>
+
+                        <!-- 3D Parallel Training Strategy -->
+                        <div style="margin-top: 2rem;">
+                            <h4>3D Parallel Training Strategy</h4>
+                            <p>Uses a combination of Data Parallelism (DP), Tensor Parallelism (TP), and Pipeline Parallelism (PP), with dynamic load balancing optimizing distribution based on model layer characteristics. Gradient synchronization optimization reduces AllReduce communication time by 60%, combined with ZeRO-3 state sharding technology for memory optimization. Pipeline scheduling uses 1F1B strategy with bubble rate controlled below 5%, sequence dimension partitioning halves long sequence training memory usage, dynamic batching adaptively adjusts batch size based on sequence length, and selective activation recomputation for checkpoint optimization.</p>
+                        </div>
+
+                        <!-- Kunlun Chip Communication-Computation Fusion Technology -->
+                        <div style="margin-top: 2rem;">
+                            <h4>Kunlun Chip Communication-Computation Fusion Technology</h4>
+                            <p><strong>Architecture Advantages:</strong> In the P800 architecture, communication operators and matrix multiplication operators belong to different hardware units, forming a significant difference from traditional GPGPU architecture. In traditional GPU architecture, communication and computation often compete for the same hardware resources, leading to mutual blocking during execution. The P800 architecture achieves true communication-computation parallelism through hardware separation design of dedicated communication processing units and matrix multiplication processing units. This design brings core advantages of resource isolation, where communication operator execution is completely unaffected by matrix multiplication operators, avoiding resource competition in traditional architectures. Meanwhile, through parallel execution mechanisms, data transmission and matrix operations can be performed simultaneously, significantly improving hardware utilization. More importantly, this architecture can use overlap technology to mutually mask communication latency with computation processes.</p>
+                            
+                            <p><strong>GEMM Communication-Computation Fusion Technology:</strong> By establishing additional bypass streams (BypassStream), we can seamlessly integrate communication operators before and after matrix multiplication operations. The core idea of this mechanism is to establish an independent scheduling system, where bypass streams run independently of main computation streams without blocking the main matrix multiplication pipeline. Meanwhile, through data prefetching mechanisms, data communication is initiated in advance to ensure timely arrival of computation-required data. After computation completion, result communication transmission is immediately initiated, forming a complete pipeline.</p>
+                            
+                            <p><strong>Multi-stream Optimization Implementation:</strong> Taking AllGather and matrix multiplication fusion as an example, through fine data chunking strategies, deep fusion of computation and communication is achieved. Traditional methods require completing the entire AllGather operation first, waiting for all data transmission to finish before starting GEMM computation. The fusion method decomposes data into multiple blocks, with each data block immediately starting corresponding computation after communication completion, forming pipeline parallelism. When communication operators prepare atomic data blocks, matrix multiplication can immediately start operations without waiting for all data to be ready, achieving true pipeline parallelism.</p>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+            <section id="applications" class="section">
+                <h2>Scenario Case Studies</h2>
+                
+                <div class="capabilities-container">
+                    <!-- Tab Navigation -->
+                    <div class="capability-tabs">
+                        <button class="capability-tab active" data-tab="ocr">OCR Recognition</button>
+                        <button class="capability-tab" data-tab="math">Mathematical Reasoning</button>
+                        <button class="capability-tab" data-tab="document">Document Understanding</button>
+                        <button class="capability-tab" data-tab="chart">Chart Analysis</button>
+                        <button class="capability-tab" data-tab="video">Video Understanding</button>
+                    </div>
+
+                    <!-- Tab Content -->
+                    <div class="capability-panels">
+                        <!-- OCR Panel -->
+                        <div class="capability-panel active" id="ocr-panel">
+                            <div class="carousel-container">
+                                <button class="carousel-btn carousel-prev" aria-label="Previous">‹</button>
+                                <div class="carousel-wrapper">
+                                    <div class="carousel-track">
+                                        <!-- Handwritten OCR -->
+                                        <div class="capability-card">
+                                            <h4>Handwritten Text Recognition</h4>
+                                            <div class="showcase-content">
+                                                <div class="showcase-image">
+                                                    <img src="images/handwritten_recognition.png" alt="Handwritten text example">
+                                                </div>
+                                                <div class="showcase-dialogue">
+                                                    <div class="user-prompt">
+                                                        <strong>User:</strong> Recognize the text in the image
+                                                    </div>
+                                                    <div class="model-response">
+                                                        <strong>Qianfan-VL:</strong> 征衣未解再跨鞍，接续奋斗开新局。中国青年作为中国大厦的不朽钢钉，中国革命的燎原火种，中国故事的青春注脚，接过时代的话筒，当有对答世界的音量，让中国声音燎亮东方。奋斗圆梦，再谱华章！
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Scene OCR -->
+                                        <div class="capability-card">
+                                            <h4>Scene Text Recognition</h4>
+                                            <div class="showcase-content">
+                                                <div class="showcase-image">
+                                                    <img src="images/scene_ocr.png" alt="Street scene text">
+                                                </div>
+                                                <div class="showcase-dialogue">
+                                                    <div class="user-prompt">
+                                                        <strong>User:</strong> Please recognize the text in the image
+                                                    </div>
+                                                    <div class="model-response">
+                                                        <strong>Qianfan-VL:</strong> 实景现房中赫出品 <br>
+                                                            颐和园公园南门800米/北侧距万柳高尔夫80米 <br>
+                                                            心30米/距地铁巴沟站C出口10米 <br>
+                                                            T·6271
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Invoice Extraction -->
+                                        <div class="capability-card">
+                                            <h4>Invoice Information Extraction</h4>
+                                            <div class="showcase-content">
+                                                <div class="showcase-image">
+                                                    <img src="images/information_extraction.jpeg" alt="Invoice">
+                                                </div>
+                                                <div class="showcase-dialogue">
+                                                    <div class="user-prompt">
+                                                        <strong>User:</strong> Extract invoice information
+                                                    </div>
+                                                    <div class="model-response">
+                                                        <strong>Qianfan-VL:</strong> 
+                                                        <pre>{
+  "发票号码": "0110020001",
+  "开票日期": "2021年10月", 
+  "合计": "1565.05",
+  "价税合计": "1580.70",
+  "项目列表": [
+    {"项目名称": "成药*安宫牛黄丸", "数量": "1", "金额": "749.11"},
+    {"项目名称": "成药*益安宁丸", "数量": "1", "金额": "758.71"},
+    {"项目名称": "学药品制剂*藿香正气软胶囊", "数量": "2", "金额": "57.23"}
+  ]
+}</pre>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="carousel-btn carousel-next" aria-label="Next">›</button>
+                            </div>
+                        </div>
+
+                        <!-- Math Panel -->
+                        <div class="capability-panel" id="math-panel">
+                            <div class="carousel-container">
+                                <button class="carousel-btn carousel-prev" aria-label="Previous">‹</button>
+                                <div class="carousel-wrapper">
+                                    <div class="carousel-track">
+                                        <div class="capability-card">
+                                            <h4>Quadratic Function Problem Solving</h4>
+                                            <div class="showcase-content">
+                                                <div class="showcase-image">
+                                                    <img src="images/geometry_new.png" alt="Quadratic function geometry problem">
+                                                </div>
+                                                <div class="showcase-dialogue">
+                                                    <div class="user-prompt">
+                                                        <strong>User:</strong> Please solve this problem and provide detailed steps.
+                                                    </div>
+                                                    <div class="model-response" style="max-height: 400px; overflow-y: auto;">
+                                                        <strong>Qianfan-VL:</strong> The user needs to solve this quadratic function problem, which consists of two questions. First, I need to carefully read the problem and understand the given conditions and what needs to be solved. The problem gives the quadratic function \( y = -x^2 + 2mx + 2m + 1 \) where \( m > 0 \), with the graph intersecting the x-axis at points A and B (A to the left of B), intersecting the y-axis at point C, with vertex D. The axis of symmetry intersects segment BC at E and the x-axis at F. Connect AC and BD. The first question asks for the coordinates of points A, B, and C (expressed as numbers or expressions containing m), and find the measure of ∠OBC. The second question asks for the value of m if ∠ACO = ∠CBD.
+                                                        
+                                                        <div style="background: #f8f9fa; padding: 1rem; border-radius: 4px; margin: 0.5rem 0;">
+                                                            <strong>Question 1: Find coordinates of A, B, C</strong><br>
+                                                            <strong>Find A, B coordinates:</strong> Intersections with x-axis require solving \( -x^2 + 2mx + 2m + 1 = 0 \)<br>
+                                                            Using quadratic formula: \( x = \frac{-2m \pm \sqrt{4m^2 + 8m + 4}}{-2} = \frac{-2m \pm \sqrt{(2m + 2)^2}}{-2} \)<br>
+                                                            Since \( m > 0 \), \( \sqrt{(2m + 2)^2} = 2m + 2 \)<br>
+                                                            First solution: \( x = \frac{-2m + 2m + 2}{-2} = -1 \)<br>
+                                                            Second solution: \( x = \frac{-2m - (2m + 2)}{-2} = 2m + 1 \)<br>
+                                                            Therefore: <strong>A(-1, 0)</strong>, <strong>B(2m + 1, 0)</strong><br><br>
+                                                            <strong>Find C coordinate:</strong> y-axis intersection, let x=0: \( y = 2m + 1 \)<br>
+                                                            Therefore: <strong>C(0, 2m + 1)</strong>
+                                                        </div>
+                                                        
+                                                        <div style="background: #f0f8ff; padding: 1rem; border-radius: 4px; margin: 0.5rem 0;">
+                                                            <strong>Find measure of ∠OBC</strong><br>
+                                                            In triangle OBC:<br>
+                                                            • OB = 2m + 1 (distance from B to origin)<br>
+                                                            • OC = 2m + 1 (distance from C to origin)<br>
+                                                            • BC = \( \sqrt{(2m + 1)^2 + (2m + 1)^2} = (2m + 1)\sqrt{2} \)<br><br>
+                                                            Since OB = OC and OB² + OC² = BC², triangle OBC is an isosceles right triangle<br>
+                                                            Therefore: <strong>∠OBC = 45°</strong>
+                                                        </div>
+                                                        
+                                                        <div style="background: #fff8dc; padding: 1rem; border-radius: 4px; margin: 0.5rem 0;">
+                                                            <strong>Question 2: If ∠ACO = ∠CBD, find value of m</strong><br>
+                                                            First find vertex D coordinates: \( D(m, (m + 1)^2) \)<br><br>
+                                                            <strong>Find tangent of ∠ACO:</strong><br>
+                                                            In right triangle ACO, opposite side AO=1, adjacent side CO=2m+1<br>
+                                                            \( \tan(\angle ACO) = \frac{AO}{CO} = \frac{1}{2m + 1} \)<br><br>
+                                                            <strong>Find tangent of ∠CBD:</strong><br>
+                                                            Slope of line BC: \( k_{BC} = \frac{2m + 1}{-(2m + 1)} = -1 \)<br>
+                                                            Slope of line BD: \( k_{BD} = \frac{(m + 1)^2}{m - (2m + 1)} = -(m + 1) \)<br>
+                                                            \( \tan(\angle CBD) = \left| \frac{-(m + 1) - (-1)}{1 + (-1)[-(m + 1)]} \right| = \frac{m}{m + 2} \)
+                                                        </div>
+                                                        
+                                                        <div style="background: #e8f5e8; padding: 1rem; border-radius: 4px; margin: 0.5rem 0;">
+                                                            <strong>Solve the equation:</strong><br>
+                                                            Since ∠ACO = ∠CBD: \( \frac{1}{2m + 1} = \frac{m}{m + 2} \)<br>
+                                                            Cross multiply: \( m + 2 = m(2m + 1) \)<br>
+                                                            Simplify: \( m + 2 = 2m^2 + m \)<br>
+                                                            Reduce: \( 2m^2 = 2 \Rightarrow m^2 = 1 \)<br>
+                                                            Since \( m > 0 \): <strong>m = 1</strong><br><br>
+                                                            <strong>Verification:</strong> When m=1, \( \tan(\angle ACO) = \frac{1}{3} \), \( \tan(\angle CBD) = \frac{1}{3} \), equal<br><br>
+                                                            <strong>Answer:</strong><span style="border: 2px solid #333; padding: 0.25rem 0.5rem; border-radius: 4px;">m = 1</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="capability-card">
+                                            <h4>Mathematical Formula Recognition</h4>
+                                            <div class="showcase-content">
+                                                <div class="showcase-image">
+                                                    <img src="images/math_equation_recognition.jpg" alt="Mathematical formula">
+                                                </div>
+                                                <div class="showcase-dialogue">
+                                                    <div class="user-prompt">
+                                                        <strong>User:</strong> Convert the formula in the image to LaTeX
+                                                    </div>
+                                                    <div class="model-response">
+                                                        <strong>Qianfan-VL:</strong> 
+                                                        <div style="word-wrap: break-word; word-break: break-all; white-space: normal; overflow-wrap: break-word;">
+                                                            \begin{align*}r_d(G):=\sum_{F\in\mathcal{F}_G^+}\frac{R_d(F)}{d_F^2},\end{align*}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div style="margin: 1rem 0;">
+                                                    <strong>Rendering Effect:</strong>
+                                                </div>
+                                                <div style="background: white; padding: 1rem; border: 1px solid #ddd; border-radius: 4px; text-align: center; margin: 0.5rem 0;">
+                                                    <img src="images/math_equation_rec.png" alt="Rendered mathematical formula" style="max-width: 100%; height: auto;">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="carousel-btn carousel-next" aria-label="Next">›</button>
+                            </div>
+                        </div>
+
+                        <!-- Document Panel -->
+                        <div class="capability-panel" id="document-panel">
+                            <div class="carousel-container">
+                                <button class="carousel-btn carousel-prev" aria-label="Previous">‹</button>
+                                <div class="carousel-wrapper">
+                                    <div class="carousel-track">
+                                        <div class="capability-card">
+                                            <h4>Document Content Understanding</h4>
+                                            <div class="showcase-content">
+                                                <div class="showcase-image">
+                                                    <img src="images/document_content_understanding.png" alt="Complex document">
+                                                </div>
+                                                <div class="showcase-dialogue">
+                                                    <div class="user-prompt">
+                                                        <strong>User:</strong> Based on the document content, what specific management requirements did the China Banking Regulatory Commission emphasize for commercial real estate credit in the document? How do these requirements affect banks' risk control?
+                                                    </div>
+                                                    <div class="model-response">
+                                                        <strong>Qianfan-VL:</strong> The document proposes four core requirements: 1) Strictly manage real estate development loans, limiting fund flows to non-compliant projects; 2) Regulate land reserve loans, limiting loan ratios and terms; 3) Strengthen housing consumer loan management, implementing differentiated down payment ratios and interest rates; 4) Strictly control commercial property loans. These requirements effectively reduce banks' credit risks and prevent real estate bubbles by limiting excessive fund flows into real estate, raising loan thresholds, and implementing differentiated pricing.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="capability-card">
+                                            <h4>Table Structure Understanding</h4>
+                                            <div class="showcase-content">
+                                                <div class="showcase-image">
+                                                    <img src="images/table_understanding.png" alt="Complex table">
+                                                </div>
+                                                <div class="showcase-dialogue">
+                                                    <div class="user-prompt">
+                                                        <strong>User:</strong> You are an expert in document parsing. Please carefully read and understand the following document screenshot and parse it into HTML. Follow these requirements: table row merging and column merging spans in the parsing result must be consistent with the document, use colspan and rowspan attributes to express; retain table headers, document body text and other non-table content; the HTML rendering reading experience must be completely consistent with the document screenshot.
+                                                    </div>
+                                                    <div class="model-response">
+                                                        <strong>Qianfan-VL:</strong> 
+                                                        <div style="margin: 1rem 0;">
+                                                            <strong>HTML Code:</strong>
+                                                        </div>
+                                                        <pre>&lt;table border="1"&gt;
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th&gt;Items&lt;/th&gt; &lt;th&gt;Ending Balance&lt;/th&gt; &lt;th&gt;Beginning Balance&lt;/th&gt;
+        &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+        &lt;tr&gt;  &lt;td colspan="3"&gt;Current Assets:&lt;/td&gt;  &lt;/tr&gt;
+        &lt;tr&gt;  &lt;td&gt;Monetary Funds&lt;/td&gt; &lt;td&gt;5,288,011,738.39&lt;/td&gt; &lt;td&gt;2,629,981,089.49&lt;/td&gt;  &lt;/tr&gt;
+        &lt;tr&gt;  &lt;td&gt;Settlement Provisions&lt;/td&gt; &lt;td&gt;&lt;/td&gt; &lt;td&gt;&lt;/td&gt;  &lt;/tr&gt;
+        &lt;tr&gt;  &lt;td&gt;Placements with Other Banks&lt;/td&gt; &lt;td&gt;&lt;/td&gt; &lt;td&gt;&lt;/td&gt;  &lt;/tr&gt;
+        &lt;tr&gt;  &lt;td&gt;Financial Assets at Fair Value&lt;/td&gt; &lt;td&gt;3,226,301.37&lt;/td&gt; &lt;td&gt;6,830,273.97&lt;/td&gt;  &lt;/tr&gt;
+        &lt;tr&gt;  &lt;td&gt;Derivative Financial Assets&lt;/td&gt; &lt;td&gt;&lt;/td&gt; &lt;td&gt;&lt;/td&gt;  &lt;/tr&gt;
+        &lt;tr&gt;  &lt;td&gt;Notes Receivable&lt;/td&gt; &lt;td&gt;1,010,636.94&lt;/td&gt; &lt;td&gt;888,800.00&lt;/td&gt;  &lt;/tr&gt;
+        &lt;tr&gt;  &lt;td&gt;Accounts Receivable&lt;/td&gt; &lt;td&gt;389,409,537.65&lt;/td&gt; &lt;td&gt;290,733,812.62&lt;/td&gt;  &lt;/tr&gt;
+        &lt;tr&gt;  &lt;td&gt;Prepayments&lt;/td&gt; &lt;td&gt;474,301,533.93&lt;/td&gt; &lt;td&gt;509,510,514.92&lt;/td&gt;  &lt;/tr&gt;
+    &lt;/tbody&gt;
+&lt;/table&gt;</pre>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div style="margin: 1rem 0;">
+                                                    <strong>Rendering Effect:</strong>
+                                                </div>
+                                                <div style="background: white; padding: 1rem; border: 1px solid #ddd; border-radius: 4px; overflow-x: auto; margin: 0.5rem 0;">
+                                                    <table border="1" style="border-collapse: collapse; width: 100%; font-size: 0.75rem;">
+                                                        <thead>
+                                                            <tr>
+                                                                <th style="padding: 0.4rem; background: #f5f5f5; border: 1px solid #ccc;">Items</th>
+                                                                <th style="padding: 0.4rem; background: #f5f5f5; border: 1px solid #ccc;">Ending Balance</th>
+                                                                <th style="padding: 0.4rem; background: #f5f5f5; border: 1px solid #ccc;">Beginning Balance</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr><td colspan="3" style="padding: 0.4rem; border: 1px solid #ccc; font-weight: bold; background: #fafafa;">Current Assets:</td></tr>
+                                                            <tr><td style="padding: 0.4rem; border: 1px solid #ccc;">Monetary Funds</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right;">5,288,011,738.39</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right;">2,629,981,089.49</td></tr>
+                                                            <tr><td style="padding: 0.4rem; border: 1px solid #ccc; color: #999;">Settlement Provisions</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right; color: #999;">—</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right; color: #999;">—</td></tr>
+                                                            <tr><td style="padding: 0.4rem; border: 1px solid #ccc; color: #999;">Placements with Other Banks</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right; color: #999;">—</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right; color: #999;">—</td></tr>
+                                                            <tr><td style="padding: 0.4rem; border: 1px solid #ccc;">Financial Assets at Fair Value</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right;">3,226,301.37</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right;">6,830,273.97</td></tr>
+                                                            <tr><td style="padding: 0.4rem; border: 1px solid #ccc; color: #999;">Derivative Financial Assets</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right; color: #999;">—</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right; color: #999;">—</td></tr>
+                                                            <tr><td style="padding: 0.4rem; border: 1px solid #ccc;">Notes Receivable</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right;">1,010,636.94</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right;">888,800.00</td></tr>
+                                                            <tr><td style="padding: 0.4rem; border: 1px solid #ccc;">Accounts Receivable</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right;">389,409,537.65</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right;">290,733,812.62</td></tr>
+                                                            <tr><td style="padding: 0.4rem; border: 1px solid #ccc;">Prepayments</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right;">474,301,533.93</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right;">509,510,514.92</td></tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="carousel-btn carousel-next" aria-label="Next">›</button>
+                            </div>
+                        </div>
+
+                        <!-- Chart Panel -->
+                        <div class="capability-panel" id="chart-panel">
+                            <div class="carousel-container">
+                                <button class="carousel-btn carousel-prev" aria-label="Previous">‹</button>
+                                <div class="carousel-wrapper">
+                                    <div class="carousel-track">
+                                        <div class="capability-card">
+                                            <h4>Chart Data Analysis</h4>
+                                            <div class="showcase-content">
+                                                <div class="showcase-image">
+                                                    <img src="images/chart_gift_reasoning.jpeg" alt="Gift preference chart">
+                                                </div>
+                                                <div class="showcase-dialogue">
+                                                    <div class="user-prompt">
+                                                        <strong>User:</strong> Xiao Ming is a male student. Which of the following items is most suitable as a Valentine's Day gift for him? a) iPhone 17 b) Dior perfume c) A beautiful bouquet of flowers d) Chocolate gift set
+                                                    </div>
+                                                    <div class="model-response">
+                                                        <strong>Qianfan-VL:</strong> 
+                                                        <div style="background: #f0f8ff; padding: 0.75rem; border-radius: 4px; margin: 0.5rem 0; font-size: 0.85rem; border-left: 3px solid #007bff;">
+                                                            <strong>&lt;think&gt;</strong><br>
+                                                            The user needs help choosing a Valentine's Day gift for Xiao Ming, who is male. First, I need to recall the previously mentioned gifts that boys most want to receive. According to the provided chart, the gift with the highest popularity index among boys is "gaming and gaming accessories" with a popularity index of 100.00, followed by headphones 63.53, keyboards 63.16, razors 58.90, watches 57.27, perfume 47.62, mobile phones 44.36, etc.<br><br>Now looking at the options: a) iPhone 17, belongs to mobile phone category, mobile phones have a popularity index of 44.36 among boys. Although higher than perfume and watches, mobile phones don't have a particularly high popularity index among boys, especially since iPhone 17 might be quite expensive, and mobile phones themselves might not be as popular among boys as gaming equipment. b) Dior perfume, among girls' most wanted gifts, perfume has a popularity of 87.13, while boys' interest in perfume is only 47.62, clearly boys have lower interest in perfume, so perfume given by girls might not be very suitable for boys. c) A beautiful bouquet of flowers, among girls' most wanted gifts there are flowers with popularity 41.22, but boys might not be very interested in flowers, usually boys might not like receiving flowers as gifts. d) Chocolate gift set, among girls' most wanted gifts there's chocolate with popularity 42.48, similarly boys' interest in chocolate might not be as high as gaming equipment, headphones, etc.<br><br>However, here we need to consider that for Valentine's Day when girls give gifts to boys, usually boys prefer practical or interest-related items. Gaming and gaming equipment have the highest popularity, but there are no gaming devices in the options, so among the remaining options, mobile phones (iPhone 17) belong to electronic products, which might be more suitable than perfume, chocolate, and flowers. Although mobile phones have a popularity index of 44.36 among boys, compared to other options, chocolate gift set (d) has popularity 42.48, mobile phone (a) 44.36, mobile phones might be slightly higher? But we need to confirm whether the mobile phone in the options is the type boys like. Also, for Valentine's Day, boys might expect more practical or meaningful gifts, mobile phones as electronic products might be more popular than perfume and flowers because boys might not like perfume much, flowers might seem cliche, chocolate gift sets although girls like them, boys might find them ordinary. While gaming equipment has the highest popularity, but it's not in the options, so we can only choose from existing options. Therefore, option a) iPhone 17 might be more suitable, because mobile phones have higher popularity among boys than perfume, chocolate, and flowers, although not as high as gaming equipment, but other options are worse.<br>
+                                                            <strong>&lt;/think&gt;</strong>
+                                                        </div>
+                                                        
+                                                        <div style="background: #f8f9fa; padding: 1rem; border-radius: 4px; margin: 0.5rem 0;">
+                                                            <strong>&lt;answer&gt;</strong><br>
+                                                            According to the chart data, among the gifts boys most want to receive, <strong>mobile phones</strong> have a popularity index of 44.36, higher than perfume (47.62), chocolate gift sets (42.48), and flowers (41.22).<br><br>
+                                                            
+                                                            Option Analysis:<br>
+                                                            - <strong>a) iPhone 17</strong>: Belongs to mobile phone category, fits boys' preference for electronic products, popularity index is at a high level among boys' gifts (second only to gaming equipment).<br>
+                                                            - <strong>b) Dior perfume</strong>: Girls' interest in perfume (87.13) is much higher than boys' (47.62), and boys have lower interest in perfume.<br>
+                                                            - <strong>c) A beautiful bouquet of flowers</strong>: Boys' interest in flowers is significantly lower than girls' (boys' flower popularity 41.22), usually not considered a preferred gift for boys.<br>
+                                                            - <strong>d) Chocolate gift set</strong>: Girls' interest in chocolate (42.48) is higher than boys' (47.62), and chocolate as a gift is more "mainstream" rather than boys' core interest.<br><br>
+                                                            
+                                                            <strong>The most suitable gift is a) iPhone 17</strong><br>
+                                                            <strong>Answer: a</strong><br>
+                                                            <strong>&lt;/answer&gt;</strong>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="capability-card">
+                                            <h4>Stock Trend Analysis</h4>
+                                            <div class="showcase-content">
+                                                <div class="showcase-image">
+                                                    <img src="images/chart_stock_elaboration.png" alt="Shanghai Stock Index">
+                                                </div>
+                                                <div class="showcase-dialogue">
+                                                    <div class="user-prompt">
+                                                        <strong>User:</strong> Describe the trend on August 27th
+                                                    </div>
+                                                    <div class="model-response">
+                                                        <strong>Qianfan-VL:</strong> On August 27th, the Shanghai Composite Index showed a volatile downward trend throughout the day. The index opened at 3869.61 points, reached a high of 3887.20 points, then gradually declined. It maintained volatile consolidation in the morning session, with the decline expanding after the afternoon session, finally closing at 3800.35 points, down 68.03 points or 1.76%. The trading volume reached 859 million lots with a turnover of 1.33 trillion yuan, showing active market participation. From the intraday chart, the index experienced a significant drop around 14:30 in the afternoon, with the decline further expanding and closing at the day's low.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="carousel-btn carousel-next" aria-label="Next">›</button>
+                            </div>
+                        </div>
+
+                        <!-- Video Panel -->
+                        <div class="capability-panel" id="video-panel">
+                            <div class="carousel-container">
+                                <button class="carousel-btn carousel-prev" aria-label="Previous">‹</button>
+                                <div class="carousel-wrapper">
+                                    <div class="carousel-track">
+                                        <div class="capability-card">
+                                            <h4>Video Understanding</h4>
+                                            <div class="showcase-content">
+                                                <div class="showcase-image">
+                                                    <video controls poster="images/video_understanding_thumbnail.jpg" style="width: 100%; max-height: 280px; cursor: pointer;">
+                                                        <source src="images/video_understanding.mp4" type="video/mp4">
+                                                        Your browser does not support video playback.
+                                                    </video>
+                                                    <div style="text-align: center; font-size: 0.8rem; color: #666; margin-top: 0.5rem;">
+                                                        Click to play video
+                                                    </div>
+                                                </div>
+                                                <div class="showcase-dialogue">
+                                                    <div class="user-prompt">
+                                                        <strong>User:</strong> Please describe the content in the video
+                                                    </div>
+                                                    <div class="model-response">
+                                                        <strong>Qianfan-VL:</strong> In this serene and peaceful video, a vast lake comes into view, with the water surface shimmering and reflecting the warm sunlight, creating sparkling light spots. Several small boats are scattered across the lake, some near the shore, others leisurely sailing in the lake center, with people on board immersed in this tranquility. In the distance, dense forests and rolling mountains form a beautiful landscape, under a clear sky with a light blue canopy, occasionally revealing a tower standing among the mountains. As the camera slowly moves, more details gradually emerge, with sunlight shining on the water surface, sparkling with dazzling light, the entire scene filled with natural beauty and peaceful atmosphere. This video not only showcases the tranquility and harmony of nature, but also conveys a leisurely and carefree lifestyle, as if being placed in a moving landscape painting.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="carousel-btn carousel-next" aria-label="Next">›</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="api" class="section">
+                <h2>Quick Start</h2>
+                
+                <h3 id="examples">Functional Example Code</h3>
+                <p>For complete usage examples and code, please refer to our Cookbook: <a href="https://github.com/baidubce/qianfan-models-cookbook/blob/main/qianfan-vl/qianfan_vl_example.ipynb" target="_blank">Qianfan-VL Example Notebook</a></p>
+
+                <h3 id="api-params">API Parameter Description</h3>
+                <p>For detailed API parameter descriptions and calling documentation, please refer to: <a href="https://cloud.baidu.com/doc/qianfan-docs/s/Fm9l6ocai" target="_blank">Qianfan ModelBuilder API Documentation</a></p>
+            </section>
+
+            <section id="conclusion" class="section">
+                <h2>Summary</h2>
+                
+                <p>
+                    <strong>Qianfan-VL is positioned as a domain-enhanced general multimodal large language model</strong>, offering multiple specifications of 3B, 8B, and 70B, achieving multi-scale and full-scenario application coverage. Focusing on B2B customer needs, it significantly enhances multiple task capabilities in intelligent office and K-12 education scenarios, including OCR recognition, document parsing, photo problem-solving, chart understanding, and complex table parsing. For scenarios requiring complex reasoning, the thinking capability can be enabled on 8B and 70B models to further enhance model performance.
+                </p>
+                
+                <p>
+                    <strong>On the technical level, it adopts multi-stage progressive continuous pre-training technology</strong>, continuously enhancing the proportion of domain-specific data while maintaining general capabilities, thereby achieving significant improvement in domain capabilities. Based on traditional small models and programmatic synthesis methods, the Qianfan-VL team has constructed a large amount of high-precision training data, significantly increasing data density for long-tail scenarios and improving model generalization. All model sizes were completed through large-scale parallel training powered by 5000+ Kunlun chips, and these models can perform efficient inference on Kunlun chips, GPUs, and other processors.
+                </p>
+                
+                <p>
+                    <strong>The Qianfan-VL series models demonstrate good generalizability among models of the same parameter size</strong>, with excellent performance on specialized domain benchmarks and even better performance on real business benchmarks. Through the domain enhancement technology route, Qianfan-VL provides high-performance solutions that combine both generalizability and specialization for enterprise-level multimodal AI applications.
+                </p>
+
+            </section>
+        </div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+</body>
+</html>

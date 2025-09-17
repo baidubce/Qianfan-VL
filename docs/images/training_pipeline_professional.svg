@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1400" height="390" viewBox="0 0 1400 390" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1400" height="390" fill="#ffffff"/>
+  
+  <!-- Title -->
+  <text x="700" y="30" text-anchor="middle" font-family="Times, serif" font-size="26" font-weight="bold" fill="#000000">Qianfan-VL's Domain Enhanced Training Pipeline</text>
+  
+  <!-- Arrows Definition -->
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#000000"/>
+    </marker>
+    <marker id="bigArrow" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto">
+      <polygon points="0 0, 12 4, 0 8" fill="#0066cc"/>
+    </marker>
+  </defs>
+  
+  <!-- Stage 1: Cross-modal Alignment -->
+  <g id="stage1">
+    <!-- Stage Title -->
+    <text x="150" y="65" text-anchor="middle" font-family="Times, serif" font-size="17" font-weight="bold" fill="#000000">Stage 1: Cross-modal Alignment</text>
+    <text x="150" y="82" text-anchor="middle" font-family="Times, serif" font-size="13" fill="#666666">100B tokens • Adapter Training</text>
+    
+    <!-- Output -->
+    <rect x="100" y="90" width="100" height="30" fill="#ffffff" stroke="#000000" stroke-width="1"/>
+    <text x="150" y="109" text-anchor="middle" font-family="Times, serif" font-size="14" fill="#000000">Output</text>
+    
+    <!-- Qianfan-LLM (Frozen) -->
+    <rect x="75" y="130" width="150" height="35" fill="#e6e6e6" stroke="#000000" stroke-width="1"/>
+    <text x="150" y="149" text-anchor="middle" font-family="Times, serif" font-size="14" font-weight="bold" fill="#666666">Qianfan-LLM</text>
+    <text x="150" y="162" text-anchor="middle" font-family="Times, serif" font-size="12" fill="#999999">❄️</text>
+    
+    <!-- MLP Adapter (Trainable) -->
+    <rect x="100" y="175" width="100" height="30" fill="#cce7ff" stroke="#000000" stroke-width="1"/>
+    <text x="150" y="193" text-anchor="middle" font-family="Times, serif" font-size="14" font-weight="bold" fill="#000000">MLP Adapter</text>
+    <text x="150" y="205" text-anchor="middle" font-family="Times, serif" font-size="12" fill="#0066cc">🔥</text>
+    
+    <!-- Vision Encoder (Frozen) -->
+    <rect x="75" y="215" width="150" height="35" fill="#e6e6e6" stroke="#000000" stroke-width="1"/>
+    <text x="150" y="234" text-anchor="middle" font-family="Times, serif" font-size="14" font-weight="bold" fill="#666666">Vision Encoder</text>
+    <text x="150" y="247" text-anchor="middle" font-family="Times, serif" font-size="12" fill="#999999">❄️</text>
+    
+    <!-- Visual Input -->
+    <rect x="50" y="260" width="80" height="30" fill="#ffffff" stroke="#000000" stroke-width="1"/>
+    <text x="90" y="279" text-anchor="middle" font-family="Times, serif" font-size="14" fill="#000000">Visual Input</text>
+    
+    <!-- Text Input -->
+    <rect x="170" y="260" width="80" height="30" fill="#ffffff" stroke="#000000" stroke-width="1"/>
+    <text x="210" y="279" text-anchor="middle" font-family="Times, serif" font-size="14" fill="#000000">Text Input</text>
+    
+    <!-- Data Source for Stage 1 -->
+    <rect x="75" y="300" width="150" height="20" fill="#f0f8ff" stroke="#000000" stroke-width="1"/>
+    <text x="150" y="313" text-anchor="middle" font-family="Times, serif" font-size="13" fill="#000000">General Knowledge Data</text>
+    
+    <!-- Arrows -->
+    <path d="M 90 260 L 90 250" stroke="#000000" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+    <path d="M 150 175 L 150 165" stroke="#000000" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+    <path d="M 150 215 L 150 205" stroke="#000000" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+    <path d="M 150 130 L 150 120" stroke="#000000" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+    <path d="M 210 260 L 210 165" stroke="#000000" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+  </g>
+  
+  <!-- Stage 2: Knowledge Injection -->
+  <g id="stage2">
+    <!-- Stage Title -->
+    <text x="500" y="65" text-anchor="middle" font-family="Times, serif" font-size="17" font-weight="bold" fill="#000000">Stage 2: General Knowledge Injection</text>
+    <text x="500" y="82" text-anchor="middle" font-family="Times, serif" font-size="13" fill="#666666">2.66T tokens • Full Parameters</text>
+
+    <!-- Output -->
+    <rect x="450" y="90" width="100" height="30" fill="#ffffff" stroke="#000000" stroke-width="1"/>
+    <text x="500" y="109" text-anchor="middle" font-family="Times, serif" font-size="14" fill="#000000">Output</text>
+
+    <!-- Qianfan-LLM (Trainable) -->
+    <rect x="425" y="130" width="150" height="35" fill="#cce7ff" stroke="#000000" stroke-width="1"/>
+    <text x="500" y="149" text-anchor="middle" font-family="Times, serif" font-size="14" font-weight="bold" fill="#000000">Qianfan-LLM</text>
+    <text x="500" y="162" text-anchor="middle" font-family="Times, serif" font-size="12" fill="#0066cc">🔥</text>
+
+    <!-- MLP Adapter (Trainable) -->
+    <rect x="450" y="175" width="100" height="30" fill="#cce7ff" stroke="#000000" stroke-width="1"/>
+    <text x="500" y="193" text-anchor="middle" font-family="Times, serif" font-size="14" font-weight="bold" fill="#000000">MLP Adapter</text>
+    <text x="500" y="205" text-anchor="middle" font-family="Times, serif" font-size="12" fill="#0066cc">🔥</text>
+
+    <!-- Vision Encoder (Trainable) -->
+    <rect x="425" y="215" width="150" height="35" fill="#cce7ff" stroke="#000000" stroke-width="1"/>
+    <text x="500" y="234" text-anchor="middle" font-family="Times, serif" font-size="14" font-weight="bold" fill="#000000">Vision Encoder</text>
+    <text x="500" y="247" text-anchor="middle" font-family="Times, serif" font-size="12" fill="#0066cc">🔥</text>
+
+    <!-- Visual Input -->
+    <rect x="400" y="260" width="80" height="30" fill="#ffffff" stroke="#000000" stroke-width="1"/>
+    <text x="440" y="279" text-anchor="middle" font-family="Times, serif" font-size="14" fill="#000000">Visual Input</text>
+
+    <!-- Text Input -->
+    <rect x="520" y="260" width="80" height="30" fill="#ffffff" stroke="#000000" stroke-width="1"/>
+    <text x="560" y="279" text-anchor="middle" font-family="Times, serif" font-size="14" fill="#000000">Text Input</text>
+
+    <!-- Data Source -->
+    <rect x="425" y="300" width="150" height="20" fill="#f0f8ff" stroke="#000000" stroke-width="1"/>
+    <text x="500" y="313" text-anchor="middle" font-family="Times, serif" font-size="13" fill="#000000">General Knowledge Data</text>
+
+    <!-- Arrows -->
+    <path d="M 440 260 L 440 250" stroke="#000000" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+    <path d="M 500 175 L 500 165" stroke="#000000" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+    <path d="M 500 215 L 500 205" stroke="#000000" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+    <path d="M 500 130 L 500 120" stroke="#000000" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+    <path d="M 560 260 L 560 165" stroke="#000000" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+  </g>
+  
+  <!-- Stage 3: Domain Enhancement -->
+  <g id="stage3">
+    <!-- Stage Title -->
+    <text x="850" y="65" text-anchor="middle" font-family="Times, serif" font-size="17" font-weight="bold" fill="#000000">Stage 3: Domain Enhanced Knowledge Injection</text>
+    <text x="850" y="82" text-anchor="middle" font-family="Times, serif" font-size="13" fill="#666666">300B tokens • Full Parameters</text>
+
+    <!-- Output -->
+    <rect x="800" y="90" width="100" height="30" fill="#ffffff" stroke="#000000" stroke-width="1"/>
+    <text x="850" y="109" text-anchor="middle" font-family="Times, serif" font-size="14" fill="#000000">Output</text>
+
+    <!-- Qianfan-LLM (Trainable) -->
+    <rect x="775" y="130" width="150" height="35" fill="#cce7ff" stroke="#000000" stroke-width="1"/>
+    <text x="850" y="149" text-anchor="middle" font-family="Times, serif" font-size="14" font-weight="bold" fill="#000000">Qianfan-LLM</text>
+    <text x="850" y="162" text-anchor="middle" font-family="Times, serif" font-size="12" fill="#0066cc">🔥</text>
+
+    <!-- MLP Adapter (Trainable) -->
+    <rect x="800" y="175" width="100" height="30" fill="#cce7ff" stroke="#000000" stroke-width="1"/>
+    <text x="850" y="193" text-anchor="middle" font-family="Times, serif" font-size="14" font-weight="bold" fill="#000000">MLP Adapter</text>
+    <text x="850" y="205" text-anchor="middle" font-family="Times, serif" font-size="12" fill="#0066cc">🔥</text>
+
+    <!-- Vision Encoder (Trainable) -->
+    <rect x="775" y="215" width="150" height="35" fill="#cce7ff" stroke="#000000" stroke-width="1"/>
+    <text x="850" y="234" text-anchor="middle" font-family="Times, serif" font-size="14" font-weight="bold" fill="#000000">Vision Encoder</text>
+    <text x="850" y="247" text-anchor="middle" font-family="Times, serif" font-size="12" fill="#0066cc">🔥</text>
+
+    <!-- Visual Input -->
+    <rect x="750" y="260" width="80" height="30" fill="#ffffff" stroke="#000000" stroke-width="1"/>
+    <text x="790" y="279" text-anchor="middle" font-family="Times, serif" font-size="14" fill="#000000">Visual Input</text>
+
+    <!-- Text Input -->
+    <rect x="870" y="260" width="80" height="30" fill="#ffffff" stroke="#000000" stroke-width="1"/>
+    <text x="910" y="279" text-anchor="middle" font-family="Times, serif" font-size="14" fill="#000000">Text Input</text>
+
+    <!-- Data Sources -->
+    <rect x="735" y="300" width="108" height="20" fill="#ffe6cc" stroke="#000000" stroke-width="1"/>
+    <text x="789" y="313" text-anchor="middle" font-family="Times, serif" font-size="13" fill="#000000">Domain Data</text>
+    <rect x="853" y="300" width="120" height="20" fill="#f0f8ff" stroke="#000000" stroke-width="1"/>
+    <text x="913" y="313" text-anchor="middle" font-family="Times, serif" font-size="13" fill="#000000">General Sampled Data</text>
+
+    <!-- Arrows -->
+    <path d="M 790 260 L 790 250" stroke="#000000" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+    <path d="M 850 175 L 850 165" stroke="#000000" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+    <path d="M 850 215 L 850 205" stroke="#000000" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+    <path d="M 850 130 L 850 120" stroke="#000000" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+    <path d="M 910 260 L 910 165" stroke="#000000" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+  </g>
+  
+  <!-- Stage 4: Post-training -->
+  <g id="stage4">
+    <!-- Stage Title -->
+    <text x="1200" y="65" text-anchor="middle" font-family="Times, serif" font-size="17" font-weight="bold" fill="#000000">Stage 4: Post-training</text>
+    <text x="1200" y="82" text-anchor="middle" font-family="Times, serif" font-size="13" fill="#666666">1B tokens • Full Parameters</text>
+
+    <!-- Output -->
+    <rect x="1150" y="90" width="100" height="30" fill="#ffffff" stroke="#000000" stroke-width="1"/>
+    <text x="1200" y="109" text-anchor="middle" font-family="Times, serif" font-size="14" fill="#000000">Output</text>
+
+    <!-- Qianfan-LLM (Trainable) -->
+    <rect x="1125" y="130" width="150" height="35" fill="#cce7ff" stroke="#000000" stroke-width="1"/>
+    <text x="1200" y="149" text-anchor="middle" font-family="Times, serif" font-size="14" font-weight="bold" fill="#000000">Qianfan-LLM</text>
+    <text x="1200" y="162" text-anchor="middle" font-family="Times, serif" font-size="12" fill="#0066cc">🔥</text>
+
+    <!-- MLP Adapter (Trainable) -->
+    <rect x="1150" y="175" width="100" height="30" fill="#cce7ff" stroke="#000000" stroke-width="1"/>
+    <text x="1200" y="193" text-anchor="middle" font-family="Times, serif" font-size="14" font-weight="bold" fill="#000000">MLP Adapter</text>
+    <text x="1200" y="205" text-anchor="middle" font-family="Times, serif" font-size="12" fill="#0066cc">🔥</text>
+
+    <!-- Vision Encoder (Trainable) -->
+    <rect x="1125" y="215" width="150" height="35" fill="#cce7ff" stroke="#000000" stroke-width="1"/>
+    <text x="1200" y="234" text-anchor="middle" font-family="Times, serif" font-size="14" font-weight="bold" fill="#000000">Vision Encoder</text>
+    <text x="1200" y="247" text-anchor="middle" font-family="Times, serif" font-size="12" fill="#0066cc">🔥</text>
+
+    <!-- Visual Input -->
+    <rect x="1100" y="260" width="80" height="30" fill="#ffffff" stroke="#000000" stroke-width="1"/>
+    <text x="1140" y="279" text-anchor="middle" font-family="Times, serif" font-size="14" fill="#000000">Visual Input</text>
+
+    <!-- Text Input -->
+    <rect x="1220" y="260" width="80" height="30" fill="#ffffff" stroke="#000000" stroke-width="1"/>
+    <text x="1260" y="279" text-anchor="middle" font-family="Times, serif" font-size="14" fill="#000000">Text Input</text>
+
+    <!-- Data Source -->
+    <rect x="1125" y="300" width="150" height="20" fill="#e6ffe6" stroke="#000000" stroke-width="1"/>
+    <text x="1200" y="313" text-anchor="middle" font-family="Times, serif" font-size="13" fill="#000000">Instruction Tuning Data</text>
+
+    <!-- Arrows -->
+    <path d="M 1140 260 L 1140 250" stroke="#000000" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+    <path d="M 1200 175 L 1200 165" stroke="#000000" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+    <path d="M 1200 215 L 1200 205" stroke="#000000" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+    <path d="M 1200 130 L 1200 120" stroke="#000000" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+    <path d="M 1260 260 L 1260 165" stroke="#000000" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+  </g>
+  
+  <!-- Stage Separators -->
+  <line x1="330" y1="50" x2="330" y2="330" stroke="#cccccc" stroke-width="1" stroke-dasharray="3,3"/>
+  <line x1="680" y1="50" x2="680" y2="330" stroke="#cccccc" stroke-width="1" stroke-dasharray="3,3"/>
+  <line x1="1030" y1="50" x2="1030" y2="330" stroke="#cccccc" stroke-width="1" stroke-dasharray="3,3"/>
+  
+  <!-- Training Progress Arrow -->
+  <path d="M 150 380 L 1200 380" stroke="#0066cc" stroke-width="3" fill="none" marker-end="url(#bigArrow)"/>
+  <text x="700" y="375" text-anchor="middle" font-family="Times, serif" font-size="20" font-weight="bold" fill="#0066cc">Training Progression</text>
+  
+  
+  <!-- Data Volume Indicators -->
+  <g id="data-volumes">
+    <rect x="75" y="330" width="150" height="15" fill="#f0f0f0" stroke="#000000" stroke-width="0.5"/>
+    <text x="150" y="341" text-anchor="middle" font-family="Times, serif" font-size="12" fill="#000000">100B tokens</text>
+    
+    <rect x="425" y="330" width="150" height="15" fill="#f0f0f0" stroke="#000000" stroke-width="0.5"/>
+    <text x="500" y="341" text-anchor="middle" font-family="Times, serif" font-size="12" fill="#000000">2.66T tokens</text>
+    
+    <rect x="775" y="330" width="150" height="15" fill="#f0f0f0" stroke="#000000" stroke-width="0.5"/>
+    <text x="850" y="341" text-anchor="middle" font-family="Times, serif" font-size="12" fill="#000000">300B tokens</text>
+    
+    <rect x="1125" y="330" width="150" height="15" fill="#f0f0f0" stroke="#000000" stroke-width="0.5"/>
+    <text x="1200" y="341" text-anchor="middle" font-family="Times, serif" font-size="12" fill="#000000">1B tokens</text>
+  </g>
+  
+</svg>
