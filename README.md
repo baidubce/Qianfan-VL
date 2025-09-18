@@ -26,7 +26,7 @@ Qianfan-VL model series is a general-purpose multimodal model enhanced for enter
 
 ## Key Features
 
-### 🚀 Multi-Scale Models
+### 🚀 Multi-Size Models
 Provides 3B, 8B, and 70B model variants to meet different scenario requirements from edge to cloud
 
 ### 📝 OCR & Document Understanding Enhancement
