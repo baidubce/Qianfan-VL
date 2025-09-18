@@ -292,5 +292,5 @@ curl 'http://127.0.0.1:8000/v1/chat/completions' \
 ---
 
 <p align="center">
-  <strong>百度智能云千帆大模型平台 | 2025</strong>
+  <strong>百度智能云千帆 | 2025</strong>
 </p>

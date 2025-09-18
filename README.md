@@ -292,5 +292,5 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 ---
 
 <p align="center">
-  <strong>Baidu AI Cloud Qianfan Platform | 2025</strong>
+  <strong>Baidu AI Cloud Qianfan | 2025</strong>
 </p>
