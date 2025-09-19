@@ -16,7 +16,7 @@
 
 📚 **[使用教程 Cookbook](https://github.com/baidubce/qianfan-models-cookbook)** |
 📖 **[技术博客](https://baidubce.github.io/Qianfan-VL)** |
-📄 **技术报告 [待更新]**
+📄 **[技术报告](qianfan_vl_tech_report_20250919.pdf)**
 
 </div>
 
