@@ -1,0 +1,1432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qianfan-VL: 面向用户需求的多模态大模型系列 | 百度智能云千帆</title>
+    <meta name="description" content="Qianfan-VL系列：3B到70B参数的多模态模型，专注文档理解、OCR增强和推理能力">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
+    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        /* Override Prism theme for dark code blocks */
+        pre[class*="language-"],
+        code[class*="language-"] {
+            background: #1e1e1e !important;
+            color: #d4d4d4 !important;
+            text-shadow: none !important;
+            -webkit-font-smoothing: auto !important;
+            -moz-osx-font-smoothing: auto !important;
+        }
+        
+        :not(pre) > code[class*="language-"],
+        pre[class*="language-"] {
+            background: #1e1e1e !important;
+            text-shadow: none !important;
+        }
+        
+        /* Ensure all code blocks have dark background */
+        pre {
+            background: #1e1e1e !important;
+            border: 1px solid #3e3e42 !important;
+            text-shadow: none !important;
+        }
+        
+        pre code {
+            background: transparent !important;
+            color: #d4d4d4 !important;
+            text-shadow: none !important;
+            font-weight: normal !important;
+        }
+        
+        /* Remove any text shadows and backgrounds from tokens */
+        .token {
+            text-shadow: none !important;
+            background: transparent !important;
+        }
+        
+        /* Ensure operators have no background */
+        .token.operator {
+            background: transparent !important;
+        }
+        
+        /* New styles for core features section */
+        .core-feature {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            padding: 2rem;
+            color: white;
+            margin-bottom: 2rem;
+        }
+        
+        .core-feature h3 {
+            color: white;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+        
+        .tech-highlight {
+            background: #f8f9fa;
+            border-left: 4px solid #007bff;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+        }
+        
+        .capability-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+    </style>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tab switching functionality
+            const tabs = document.querySelectorAll('.capability-tab');
+            const panels = document.querySelectorAll('.capability-panel');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const targetTab = tab.dataset.tab;
+                    
+                    // Remove active class from all tabs and panels
+                    tabs.forEach(t => t.classList.remove('active'));
+                    panels.forEach(p => p.classList.remove('active'));
+                    
+                    // Add active class to clicked tab and corresponding panel
+                    tab.classList.add('active');
+                    document.getElementById(targetTab + '-panel').classList.add('active');
+                });
+            });
+            
+            // Code tab switching functionality
+            const codeTabs = document.querySelectorAll('.code-tab');
+            const codePanels = document.querySelectorAll('.code-panel');
+            
+            codeTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const targetTab = tab.dataset.tab;
+                    
+                    // Remove active class from all tabs and panels
+                    codeTabs.forEach(t => t.classList.remove('active'));
+                    codePanels.forEach(p => p.classList.remove('active'));
+                    
+                    // Add active class to clicked tab and corresponding panel
+                    tab.classList.add('active');
+                    document.getElementById(targetTab + '-panel').classList.add('active');
+                });
+            });
+            
+            // Carousel functionality
+            const carousels = document.querySelectorAll('.carousel-container');
+            
+            carousels.forEach(carousel => {
+                const track = carousel.querySelector('.carousel-track');
+                const cards = track.querySelectorAll('.capability-card');
+                const prevBtn = carousel.querySelector('.carousel-prev');
+                const nextBtn = carousel.querySelector('.carousel-next');
+                
+                let currentIndex = 0;
+                const cardWidth = 520; // Card width (500px) + gap (20px)
+                const visibleCards = Math.floor(carousel.offsetWidth / cardWidth);
+                const maxIndex = Math.max(0, cards.length - visibleCards);
+                
+                function updateCarousel() {
+                    const offset = -currentIndex * cardWidth;
+                    track.style.transform = `translateX(${offset}px)`;
+                    
+                    // Update button states
+                    prevBtn.disabled = currentIndex === 0;
+                    nextBtn.disabled = currentIndex >= maxIndex;
+                }
+                
+                prevBtn.addEventListener('click', () => {
+                    if (currentIndex > 0) {
+                        currentIndex--;
+                        updateCarousel();
+                    }
+                });
+                
+                nextBtn.addEventListener('click', () => {
+                    if (currentIndex < maxIndex) {
+                        currentIndex++;
+                        updateCarousel();
+                    }
+                });
+                
+                // Initialize carousel
+                updateCarousel();
+                
+                // Update on window resize
+                window.addEventListener('resize', () => {
+                    const newVisibleCards = Math.floor(carousel.offsetWidth / cardWidth);
+                    const newMaxIndex = Math.max(0, cards.length - newVisibleCards);
+                    if (currentIndex > newMaxIndex) {
+                        currentIndex = newMaxIndex;
+                    }
+                    updateCarousel();
+                });
+            });
+            
+            // Image modal functionality
+            const showcaseImages = document.querySelectorAll('.showcase-image img');
+            const modal = document.createElement('div');
+            modal.className = 'image-modal';
+            modal.innerHTML = `
+                <span class="image-modal-close">&times;</span>
+                <div class="image-modal-content">
+                    <img src="" alt="">
+                </div>
+            `;
+            document.body.appendChild(modal);
+            
+            const modalImg = modal.querySelector('.image-modal-content img');
+            const closeBtn = modal.querySelector('.image-modal-close');
+            
+            showcaseImages.forEach(img => {
+                img.addEventListener('click', () => {
+                    modal.style.display = 'block';
+                    modalImg.src = img.src;
+                    modalImg.alt = img.alt;
+                });
+            });
+            
+            closeBtn.addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
+            
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="hero-section">
+                <h2 class="hero-title" style="margin: 0 0 1.5rem 0; text-align: center;">Qianfan-VL: 领域增强通用视觉-语言模型</h2>
+                <p class="hero-subtitle">通过持续预训练实现领域能力增强 | 3B到70B参数规模 | 文档理解与OCR能力增强 | 支持思考推理能力</p>
+                <p class="hero-meta">2025年8月发布 | 百度智能云千帆</p>
+            </div>
+
+            <!-- 目录 -->
+            <section class="table-of-contents section" style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0;">
+                <h2 style="font-size: 1.3rem; margin-bottom: 1rem;">目录</h2>
+                <div style="display: flex; flex-wrap: wrap; gap: 2rem; font-size: 0.9rem; line-height: 1.6;">
+                    <div style="flex: 1; min-width: 280px;">
+                        <div style="margin-bottom: 0.8rem;">
+                            <strong><a href="#core-features" style="color: var(--text-primary);">1. 核心功能</a></strong>
+                            <div style="margin-left: 1rem; margin-top: 0.3rem; color: #666;">
+                                <a href="#multi-scale-models" style="color: inherit; text-decoration: none;">1.1 多尺寸模型</a><br>
+                                <a href="#ocr-document" style="color: inherit; text-decoration: none;">1.2 OCR与文档理解</a><br>
+                                <a href="#chain-reasoning" style="color: inherit; text-decoration: none;">1.3 思考推理能力</a>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 0.8rem;">
+                            <strong><a href="#tech-highlights" style="color: var(--text-primary);">2. 架构与技术特色</a></strong>
+                            <div style="margin-left: 1rem; margin-top: 0.3rem; color: #666;">
+                                <a href="#overall-architecture" style="color: inherit; text-decoration: none;">2.1 整体架构</a><br>
+                                <a href="#tech-innovation" style="color: inherit; text-decoration: none;">2.2 技术创新</a>
+                                <div style="margin-left: 1rem; font-size: 0.85rem;">
+                                    <a href="#training-pipeline" style="color: inherit; text-decoration: none;">• 训练管线</a><br>
+                                    <a href="#data-synthesis" style="color: inherit; text-decoration: none;">• 数据合成</a><br>
+                                    <a href="#kunlun-training" style="color: inherit; text-decoration: none;">• 昆仑芯训练</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="flex: 1; min-width: 280px;">
+                        <div style="margin-bottom: 0.8rem;">
+                            <strong><a href="#applications" style="color: var(--text-primary);">3. 场景案例展示</a></strong>
+                            <div style="margin-left: 1rem; margin-top: 0.3rem; color: #666;">
+                                <a href="#ocr-cases" style="color: inherit; text-decoration: none;">3.1 OCR识别</a><br>
+                                <a href="#math-cases" style="color: inherit; text-decoration: none;">3.2 数学推理</a><br>
+                                <a href="#doc-cases" style="color: inherit; text-decoration: none;">3.3 文档理解</a><br>
+                                <a href="#chart-cases" style="color: inherit; text-decoration: none;">3.4 图表分析</a><br>
+                                <a href="#video-cases" style="color: inherit; text-decoration: none;">3.5 视频理解</a>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 0.8rem;">
+                            <strong><a href="#api" style="color: var(--text-primary);">4. 快速开始</a></strong>
+                            <div style="margin-left: 1rem; margin-top: 0.3rem; color: #666;">
+                                <a href="#examples" style="color: inherit; text-decoration: none;">4.1 示例代码</a><br>
+                                <a href="#api-params" style="color: inherit; text-decoration: none;">4.2 API参数</a>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <strong><a href="#conclusion" style="color: var(--text-primary);">5. 总结</a></strong>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <section id="core-features" class="section">
+                <h2>核心功能</h2>
+                <p class="section-intro">
+                    Qianfan-VL模型系列是在企业级应用多模态大模型的场景中进行强化的通用多模态大模型，具备基础的通用能力，同时在产业落地的高频场景有深度的优化。通过三大核心功能，精准满足不同场景下的多模态理解需求。
+                </p>
+
+                <!-- 三列横排布局 -->
+                <div class="core-features-grid">
+                    <!-- 核心功能1：多尺寸模型 -->
+                    <div class="core-feature-column">
+                        <h3>多尺寸模型</h3>
+                        <p>提供3B、8B、70B三种规格的模型，满足不同场景需求</p>
+                    </div>
+
+                    <!-- 核心功能2：OCR与文档理解增强 -->
+                    <div class="core-feature-column">
+                        <h3>OCR与文档理解增强</h3>
+                        <p>全场景OCR识别与智能理解能力，覆盖文档、自然场景等多种应用场景</p>
+                    </div>
+
+                    <!-- 核心功能3：思考推理能力 -->
+                    <div class="core-feature-column">
+                        <h3>思考推理能力</h3>
+                        <p>支持思考链能力，在数学、推理计算等复杂场景展现卓越表现</p>
+                    </div>
+                </div>
+
+                <!-- 详细展开内容 -->
+                <div class="core-features-details">
+                    <!-- 多尺寸模型详情 -->
+                    <div id="multi-scale-models" class="core-feature-detail">
+                        <h3>多尺寸模型满足不同场景需求</h3>
+                        <p>提供3B、8B、70B三种规格的模型，让不同规模的企业和开发者都能找到合适的解决方案</p>
+                        <div class="table-wrapper" style="margin-top: 1.5rem;">
+                            <table class="benchmark-table">
+                                <thead>
+                                    <tr>
+                                        <th>模型名称</th>
+                                        <th>上下文长度</th>
+                                        <th>支持思考</th>
+                                        <th>适用场景</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Qianfan-VL-3B</strong></td>
+                                        <td>32k</td>
+                                        <td>不支持</td>
+                                        <td>端上实时场景、OCR文字识别</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Qianfan-VL-8B</strong></td>
+                                        <td>32k</td>
+                                        <td>支持</td>
+                                        <td>服务端通用场景、微调优化场景</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Qianfan-VL-70B</strong></td>
+                                        <td>32k</td>
+                                        <td>支持</td>
+                                        <td>离线数据合成、复杂推理计算场景</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- 通用能力基准测试 -->
+                        <div style="margin-top: 2rem;">
+                            <h4>通用能力基准测试表现</h4>
+                            <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem;">
+                                在标准多模态基准测试中，Qianfan-VL各尺寸模型与主流模型的全面对比
+                            </p>
+                            
+                            <div class="table-wrapper">
+                                <table class="benchmark-table">
+                                    <thead>
+                                        <tr>
+                                            <th>基准测试</th>
+                                            <th>Qianfan-VL-3B</th>
+                                            <th>Qianfan-VL-8B</th>
+                                            <th>Qianfan-VL-70B</th>
+                                            <th>Intern3-VL-8B</th>
+                                            <th>Intern3-VL-78B</th>
+                                            <th>Qwen2.5-VL-7B</th>
+                                            <th>Qwen2.5-VL-72B</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>A-Bench_VAL</td>
+                                            <td>75.65</td>
+                                            <td>75.72</td>
+                                            <td><strong>78.1</strong></td>
+                                            <td>75.86</td>
+                                            <td>75.86</td>
+                                            <td>76.49</td>
+                                            <td><strong>79.22</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td>CCBench</td>
+                                            <td>66.86</td>
+                                            <td>70.39</td>
+                                            <td><strong>80.98</strong></td>
+                                            <td>77.84</td>
+                                            <td>70.78</td>
+                                            <td>57.65</td>
+                                            <td>73.73</td>
+                                        </tr>
+                                        <tr>
+                                            <td>SEEDBench_IMG</td>
+                                            <td>76.55</td>
+                                            <td>78.02</td>
+                                            <td><strong>79.13</strong></td>
+                                            <td>77.00</td>
+                                            <td>77.52</td>
+                                            <td>76.98</td>
+                                            <td><strong>78.34</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td>SEEDBench2_Plus</td>
+                                            <td>67.59</td>
+                                            <td>70.97</td>
+                                            <td><strong>73.17</strong></td>
+                                            <td>69.52</td>
+                                            <td>68.47</td>
+                                            <td>70.93</td>
+                                            <td><strong>73.25</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td>MMVet</td>
+                                            <td>48.17</td>
+                                            <td>53.21</td>
+                                            <td>57.34</td>
+                                            <td><strong>80.28</strong></td>
+                                            <td><strong>78.90</strong></td>
+                                            <td>70.64</td>
+                                            <td>75.69</td>
+                                        </tr>
+                                        <tr>
+                                            <td>MMMU_VAL</td>
+                                            <td>46.44</td>
+                                            <td>47.11</td>
+                                            <td>58.33</td>
+                                            <td>56.11</td>
+                                            <td><strong>60.78</strong></td>
+                                            <td>51.0</td>
+                                            <td><strong>65.78</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td>ScienceQA_TEST</td>
+                                            <td>95.19</td>
+                                            <td>97.62</td>
+                                            <td><strong>98.76</strong></td>
+                                            <td>97.97</td>
+                                            <td>97.17</td>
+                                            <td>85.47</td>
+                                            <td>92.51</td>
+                                        </tr>
+                                        <tr>
+                                            <td>ScienceQA_VAL</td>
+                                            <td>93.85</td>
+                                            <td>97.62</td>
+                                            <td><strong>98.81</strong></td>
+                                            <td><strong>97.81</strong></td>
+                                            <td>95.14</td>
+                                            <td>83.59</td>
+                                            <td>91.32</td>
+                                        </tr>
+                                        <tr>
+                                            <td>MMT-Bench_VAL</td>
+                                            <td>62.23</td>
+                                            <td>63.22</td>
+                                            <td><strong>71.06</strong></td>
+                                            <td>65.17</td>
+                                            <td>63.67</td>
+                                            <td>61.40</td>
+                                            <td><strong>69.49</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td>MTVQA_TEST</td>
+                                            <td>26.5</td>
+                                            <td>30.14</td>
+                                            <td><strong>32.18</strong></td>
+                                            <td>30.30</td>
+                                            <td>27.62</td>
+                                            <td>29.08</td>
+                                            <td><strong>31.48</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td>BLINK</td>
+                                            <td>49.97</td>
+                                            <td>56.81</td>
+                                            <td><strong>59.44</strong></td>
+                                            <td>55.87</td>
+                                            <td>51.87</td>
+                                            <td>54.55</td>
+                                            <td><strong>63.02</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td>MMStar</td>
+                                            <td>57.93</td>
+                                            <td>64.07</td>
+                                            <td><strong>69.47</strong></td>
+                                            <td><strong>68.40</strong></td>
+                                            <td>66.07</td>
+                                            <td>61.53</td>
+                                            <td>66.00</td>
+                                        </tr>
+                                        <tr>
+                                            <td>RealWorldQA</td>
+                                            <td>65.75</td>
+                                            <td>70.59</td>
+                                            <td>71.63</td>
+                                            <td>71.11</td>
+                                            <td><strong>74.25</strong></td>
+                                            <td>69.28</td>
+                                            <td>73.86</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Q-Bench1_VAL</td>
+                                            <td>73.51</td>
+                                            <td>75.25</td>
+                                            <td>77.46</td>
+                                            <td>75.99</td>
+                                            <td>77.99</td>
+                                            <td>78.10</td>
+                                            <td><strong>79.93</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td>POPE</td>
+                                            <td>85.08</td>
+                                            <td>86.06</td>
+                                            <td>88.97</td>
+                                            <td><strong>90.59</strong></td>
+                                            <td>88.87</td>
+                                            <td>85.97</td>
+                                            <td>83.35</td>
+                                        </tr>
+                                        <tr>
+                                            <td>RefCOCO (Avg)</td>
+                                            <td>85.94</td>
+                                            <td>89.37</td>
+                                            <td><strong>91.01</strong></td>
+                                            <td>89.65</td>
+                                            <td><strong>91.40</strong></td>
+                                            <td>86.56</td>
+                                            <td>90.25</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- OCR与文档理解能力详情 -->
+                    <div id="ocr-document" class="core-feature-detail">
+                        <h3>OCR与文档理解能力增强</h3>
+                        <p>主打OCR全场景识别和复杂版面文档理解两大特色能力，在多项基准测试中表现优异，为企业级应用提供高精度的视觉理解解决方案</p>
+                        
+                        <div class="feature-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem;">
+                            <div style="padding: 0.75rem;">
+                                <h4>OCR全场景任务</h4>
+                                <ul>
+                                    <li><strong>手写识别：</strong>中英文手写体识别，支持草书、行书等多种字体</li>
+                                    <li><strong>公式识别：</strong>数学公式精确识别并转换为LaTeX格式</li>
+                                    <li><strong>自然场景文字识别：</strong>街景、招牌、标识等复杂场景文字检测与识别</li>
+                                    <li><strong>卡证票据信息抽取：</strong>可对驾驶证、营业执照、发票等进行结构化信息提取</li>
+                                </ul>
+                            </div>
+                            <div style="padding: 0.75rem;">
+                                <h4>复杂版面文档理解</h4>
+                                <ul>
+                                    <li><strong>版面分析：</strong>自动识别标题、段落、图表、表格等版面元素</li>
+                                    <li><strong>表格理解：</strong>复杂表格结构解析，支持合并单元格和多层表头</li>
+                                    <li><strong>图表理解：</strong>柱状图、折线图、饼图等图表数据提取和分析</li>
+                                    <li><strong>文档问答：</strong>基于文档内容的智能问答和信息检索</li>
+                                    <li><strong>文档解析：</strong>PDF、Word等格式文档的结构化解析</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div style="padding: 0.75rem; margin-top: 1rem;">
+                            <h4>OCR与文档理解基准测试表现</h4>
+                            <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem;">
+                                在OCR与文档理解专业基准测试中，Qianfan-VL各尺寸模型与主流模型的全面对比
+                            </p>
+                            
+                            <div class="table-wrapper">
+                                <table class="benchmark-table">
+                                    <thead>
+                                        <tr>
+                                            <th>基准测试</th>
+                                            <th>Qianfan-VL-3B</th>
+                                            <th>Qianfan-VL-8B</th>
+                                            <th>Qianfan-VL-70B</th>
+                                            <th>Qwen2.5-VL-3B</th>
+                                            <th>Intern3-VL-8B</th>
+                                            <th>Intern3-VL-78B</th>
+                                            <th>Qwen2.5-VL-7B</th>
+                                            <th>Qwen2.5-VL-72B</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>OCRBench</td>
+                                            <td>831</td>
+                                            <td>854</td>
+                                            <td>873</td>
+                                            <td>810</td>
+                                            <td><strong>881</strong></td>
+                                            <td>847</td>
+                                            <td><strong>883</strong></td>
+                                            <td>874</td>
+                                        </tr>
+                                        <tr>
+                                            <td>AI2D_TEST</td>
+                                            <td>81.38</td>
+                                            <td><strong>85.07</strong></td>
+                                            <td><strong>87.73</strong></td>
+                                            <td>77.07</td>
+                                            <td><strong>85.07</strong></td>
+                                            <td>83.55</td>
+                                            <td>80.472</td>
+                                            <td>83.84</td>
+                                        </tr>
+                                        <tr>
+                                            <td>OCRVQA_TEST</td>
+                                            <td>66.15</td>
+                                            <td>68.98</td>
+                                            <td><strong>74.06</strong></td>
+                                            <td>69.24</td>
+                                            <td>39.03</td>
+                                            <td>35.58</td>
+                                            <td><strong>71.02</strong></td>
+                                            <td>66.8</td>
+                                        </tr>
+                                        <tr>
+                                            <td>TextVQA_VAL</td>
+                                            <td>80.11</td>
+                                            <td>82.13</td>
+                                            <td><strong>84.48</strong></td>
+                                            <td>79.09</td>
+                                            <td>82.15</td>
+                                            <td>83.52</td>
+                                            <td><strong>84.962</strong></td>
+                                            <td>83.26</td>
+                                        </tr>
+                                        <tr>
+                                            <td>DocVQA_VAL</td>
+                                            <td>90.85</td>
+                                            <td>93.54</td>
+                                            <td>94.75</td>
+                                            <td>92.71</td>
+                                            <td>92.04</td>
+                                            <td>83.82</td>
+                                            <td><strong>94.91</strong></td>
+                                            <td><strong>95.75</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td>ChartQA_TEST</td>
+                                            <td>81.79</td>
+                                            <td><strong>87.72</strong></td>
+                                            <td><strong>89.6</strong></td>
+                                            <td>83.4</td>
+                                            <td>85.76</td>
+                                            <td>82.04</td>
+                                            <td>86.68</td>
+                                            <td>87.16</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                        </div>
+                    </div>
+
+                    <!-- 思考推理能力详情 -->
+                    <div id="chain-reasoning" class="core-feature-detail">
+                        <h3>思考推理能力</h3>
+                        <p>8B和70B模型支持通过特殊token激活思考链能力，覆盖复杂图表理解、视觉推理、数学解题等多种场景。这类任务通常需要基于视觉信息与外部知识进行组合推理。我们合成了大量视觉类/文本类的推理数据并融合到Qianfan-VL模型的后训练中，从benchmark表现来看显著提升了推理计算相关类任务的效果</p>
+                        
+                        <div class="reasoning-features">
+                            <div style="padding: 0.75rem; margin-top: 1rem;">
+                                <h4>核心推理应用场景</h4>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.5rem;">
+                                    <div>
+                                        <h5>复杂图表理解与推理</h5>
+                                        <ul>
+                                            <li><strong>数据分析：</strong>从复杂图表中提取关键信息并进行推理分析</li>
+                                            <li><strong>趋势预测：</strong>基于历史数据图表进行趋势判断和预测</li>
+                                            <li><strong>关联推理：</strong>多图表数据的交叉分析和关联推理</li>
+                                            <li><strong>统计计算：</strong>图表数据的统计分析和定量计算</li>
+                                        </ul>
+                                    </div>
+                                    <div>
+                                        <h5>数学解题与视觉推理</h5>
+                                        <ul>
+                                            <li><strong>几何推理：</strong>空间图形关系理解与几何定理应用</li>
+                                            <li><strong>公式识别：</strong>复杂数学公式的精确识别与理解</li>
+                                            <li><strong>分步求解：</strong>清晰的解题思路和步骤展示</li>
+                                            <li><strong>逻辑推断：</strong>基于视觉线索的逻辑推理和问题求解</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div style="padding: 0.75rem; margin-top: 1rem;">
+                                <h4>数学解题基准测试表现</h4>
+                                <div class="table-wrapper" style="margin-top: 0.5rem;">
+                                    <table class="benchmark-table">
+                                        <thead>
+                                            <tr>
+                                                <th>基准测试</th>
+                                                <th>Qianfan-VL-8B</th>
+                                                <th>Qianfan-VL-70B</th>
+                                                <th>Intern3-VL-8B</th>
+                                                <th>Intern3-VL-78B</th>
+                                                <th>Qwen2.5-VL-7B</th>
+                                                <th>Qwen2.5-VL-72B</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Mathvista-mini</td>
+                                                <td>69.19</td>
+                                                <td><strong>78.6</strong></td>
+                                                <td>69.5</td>
+                                                <td><strong>71.1</strong></td>
+                                                <td>69.5</td>
+                                                <td>70.1</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Math Vision</td>
+                                                <td><strong>32.82</strong></td>
+                                                <td><strong>50.29</strong></td>
+                                                <td>21.48</td>
+                                                <td>33.48</td>
+                                                <td>29.61</td>
+                                                <td>34.8</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Math Verse</td>
+                                                <td><strong>48.4</strong></td>
+                                                <td><strong>61.04</strong></td>
+                                                <td>30.96</td>
+                                                <td>43.32</td>
+                                                <td>43.68</td>
+                                                <td>49.26</td>
+                                            </tr>
+                                            <tr>
+                                                <td>ChartQA Pro</td>
+                                                <td><strong>50.41</strong></td>
+                                                <td><strong>52</strong></td>
+                                                <td>19.38</td>
+                                                <td>47.92</td>
+                                                <td>37.32</td>
+                                                <td>44.43</td>
+                                            </tr>
+                                            <tr>
+                                                <td>HallusionBench</td>
+                                                <td><strong>51.72</strong></td>
+                                                <td><strong>54.52</strong></td>
+                                                <td>49.7</td>
+                                                <td>40.5</td>
+                                                <td>49.2</td>
+                                                <td>40.2</td>
+                                            </tr>
+                                            <tr>
+                                                <td>InHouse Dataset A</td>
+                                                <td><strong>59.87</strong></td>
+                                                <td><strong>71.78</strong></td>
+                                                <td>26</td>
+                                                <td>43.40</td>
+                                                <td>40.64</td>
+                                                <td>41.47</td>
+                                            </tr>
+                                            <tr>
+                                                <td>InHouse Dataset B</td>
+                                                <td><strong>61.33</strong></td>
+                                                <td><strong>75.6</strong></td>
+                                                <td>26.81</td>
+                                                <td>39.7</td>
+                                                <td>36.25</td>
+                                                <td>42.65</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tech-highlights" class="section">
+                <h2>模型架构设计与技术特色</h2>
+                <p class="section-intro">
+                    Qianfan-VL通过先进的多模态架构设计和三大技术创新，实现了领域增强的通用视觉-语言能力
+                </p>
+
+                <!-- 架构总览 -->
+                <div id="overall-architecture" class="architecture-overview" style="margin: 2rem 0;">
+                    <h3>整体架构</h3>
+                    <div style="text-align: center; margin: 1.5rem 0;">
+                        <img src="images/qianfan_vl_arch_professional.svg" alt="Qianfan-VL Architecture" class="architecture-image">
+                    </div>
+                    <p style="text-align: center; color: #666; font-size: 0.9rem;">
+                        Qianfan-VL采用先进的多模态架构，融合了业界最佳实践和自主创新
+                    </p>
+                    
+                    <!-- 架构组件说明 -->
+                    <div class="architecture-details" style="margin: 2rem 0;">
+                        <h4>核心架构组件</h4>
+                        <div class="feature-grid">
+                            <div class="feature-card">
+                                <h5 style="font-size: 1.12rem;">语言模型</h5>
+                                <p>3B模型基于Qwen2.5架构, 8B和70B模型基于Llama 3.1架构，通过3T中英文语料进行词表扩充和本地化增强，支持中英文混合理解</p>
+                            </div>
+                            <div class="feature-card">
+                                <h5 style="font-size: 1.12rem;">视觉编码器</h5>
+                                <p>采用InternViT初始化，支持动态分块处理不同分辨率图像，最高支持4K分辨率输入</p>
+                            </div>
+                            <div class="feature-card">
+                                <h5 style="font-size: 1.12rem;">跨模态融合</h5>
+                                <p>MLP适配器实现视觉和语言模态的无缝桥接，保证信息传递的准确性和效率</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 技术创新与特色 -->
+                <h3 id="tech-innovation">技术创新与特色</h3>
+                
+                <!-- 三列横排布局 - 技术创新特色 -->
+                <div class="tech-highlights-grid">
+                    <!-- 技术特色1：能力增强训练管线 -->
+                    <div class="tech-highlight-column">
+                        <h3>能力增强训练管线</h3>
+                        <p>创新的四阶段训练策略，在保持通用能力基础上实现领域能力显著提升</p>
+                    </div>
+
+                    <!-- 技术特色2：高精度数据合成技术 -->
+                    <div class="tech-highlight-column">
+                        <h3>高精度数据合成技术</h3>
+                        <p>结合传统CV模型和程序化生成，高效构建高质量训练数据</p>
+                    </div>
+
+                    <!-- 技术特色3：大规模昆仑卡训练 -->
+                    <div class="tech-highlight-column">
+                        <h3>大规模昆仑卡训练</h3>
+                        <p>全程使用百度自研昆仑芯P800完成训练，展现国产AI基础设施成熟能力</p>
+                    </div>
+                </div>
+
+
+                <!-- 技术创新详细说明 -->
+                <div class="tech-highlights-details">
+                    <!-- 技术特色1：能力增强训练管线 -->
+                    <div id="training-pipeline" class="tech-highlight-detail">
+                        <h3>能力增强训练管线</h3>
+                        <p>创新的四阶段渐进式训练策略，在保持通用能力的基础上实现领域能力的显著提升</p>
+                        
+                        <!-- 训练管线示意图 -->
+                        <div style="text-align: center; margin: 2rem 0;">
+                            <img src="images/training_pipeline_professional.svg" alt="Qianfan-VL Training Pipeline" class="architecture-image" style="max-width: 100%; height: auto;">
+                        </div>
+                        
+                        <div class="training-stages" style="margin-top: 2rem;">
+                            <p><strong>Stage 1：跨模态对齐</strong> - 该阶段旨在建立视觉-语言基础连接映射，采用仅更新MLP Adapter、冻结Vision Encoder和LLM的训练策略，使用100B tokens通用知识数据进行训练。这一阶段是必要的，否则会影响整体性能。</p>
+                            
+                            <p><strong>Stage 2：通用知识注入</strong> - 重点关注注入的数据量，尽量覆盖所有训练数据，采用全参数更新训练策略，使用2.66T tokens通用知识数据。该阶段建立模型的强大基础能力，同时放入足够比例的文本语料防止LLM知识被灾难性遗忘。</p>
+                            
+                            <p><strong>Stage 3：领域增强知识注入</strong> - 精选要增强领域的高质量数据，包含所增强领域的任务数据，同时融合通用数据采样以维持通用知识、防止灾难性遗忘，采用全参数更新训练，使用0.32T tokens领域特定数据和通用采样数据。该阶段实现专业能力的显著提升。</p>
+                            
+                            <p><strong>Stage 4：后训练</strong> - 该阶段旨在提升指令跟随能力和偏好对齐，采用全参数更新训练策略，使用1B tokens指令微调数据进行训练。会使用高质量的对齐数据，包括复杂指令跟随、写作、问答、编程、OCR、信息抽取、数学、推理计算等任务，同时放入足量的纯文本指令微调数据，维持文本模型的能力。</p>
+                        </div>
+                    </div>
+
+                    <!-- 技术特色2：高精度数据合成技术 -->
+                    <div id="data-synthesis" class="tech-highlight-detail">
+                        <h3>高精度数据合成技术</h3>
+                        <p>构建面向多模态任务的大规模数据合成管线，涵盖文档识别、数学解题、图表理解、表格识别、公式识别、自然场景OCR等核心任务，通过精细化的pipeline设计和中间过程数据构造，实现高质量训练数据的规模化生产</p>
+                        
+                        <!-- 数据合成任务管线 -->
+                        <div style="margin-top: 2rem;">
+                            <h4>多任务数据合成管线</h4>
+                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 1rem;">
+                                <div style="background: #fafafa; padding: 1.5rem; border-radius: 8px;">
+                                    <h5>文档理解管线</h5>
+                                    <div style="font-size: 0.85rem; margin-bottom: 1rem; color: #555;">
+                                        <strong>核心任务：</strong>文档解析、文档转Markdown、智能问答三大功能
+                                    </div>
+                                    <ul style="font-size: 0.9rem;"><li><strong>全方位解析：</strong>融合布局、类别、内容的多维度解析，支持多语言及手写扫描件</li>
+                                        <li><strong>图像转Markdown：</strong>单页/多页文档高效转换为结构化Markdown</li>
+                                        <li><strong>文档问答：</strong>支持总结、推理、多轮对话的深度理解</li>
+                                    </ul>
+                                </div>
+                                
+                                <div style="background: #fafafa; padding: 1.5rem; border-radius: 8px;">
+                                    <h5>数学解题OCR管线</h5>
+                                    <div style="font-size: 0.85rem; margin-bottom: 1rem; color: #555;">
+                                        <strong>核心优势：</strong>教育场景定制化数据构建+视觉数学推理强化
+                                    </div>
+                                    <ul style="font-size: 0.9rem;"><li><strong>教育数据预处理：</strong>收集多语言高质量解题数据，标准化术语符号，结构化题干/条件/步骤/公式</li>
+                                        <li><strong>解题数据合成：</strong>结合知识体系，通过结构化表述→LaTeX→HTML→图像的管线合成拍照解题场景数据</li>
+                                        <li><strong>视觉抽取强化：</strong>针对图表、公式、几何等复杂场景，通过形式化描述语言结合HTML渲染构造高质量数据</li>
+                                    </ul>
+                                </div>
+                                
+                                <div style="background: #fafafa; padding: 1.5rem; border-radius: 8px;">
+                                    <h5>表格识别管线</h5>
+                                    <div style="font-size: 0.85rem; margin-bottom: 1rem; color: #555;">
+                                        <strong>核心目标：</strong>程序化生成高质量的表格结构化数据
+                                    </div>
+                                    <ul style="font-size: 0.9rem;"><li><strong>表格结构化：</strong>图表表格精确恢复为HTML/LaTeX，支持无线表格、合同表格等复杂版式</li>
+                                        <li><strong>表格问答：</strong>基于表格图像的数值计算、比较分析、信息检索</li>
+                                        <li><strong>内容生成：</strong>随机表格结构+Faker库/LLM填充+随机单元格合并并通过专业CSS主题渲染</li>
+                                    </ul>
+                                </div>
+                                
+                                <div style="background: #fafafa; padding: 1.5rem; border-radius: 8px;">
+                                    <h5>公式识别管线</h5>
+                                    <div style="font-size: 0.85rem; margin-bottom: 1rem; color: #555;">
+                                        <strong>核心能力：</strong>公式图像精确恢复为LaTeX，支持印刷体、手写体公式识别，能够处理复杂嵌套表达式、矩阵方程组等各类复杂版式
+                                    </div>
+                                    <ul style="font-size: 0.9rem;"><li><strong>符号识别：</strong>数学符号、希腊字母、特殊记号精确识别</li>
+                                        <li><strong>结构解析：</strong>分式、根式、上下标、矩阵等复杂结构</li>
+                                        <li><strong>多引擎渲染：</strong>MathJax/KaTeX确保渲染一致性</li>
+                                    </ul>
+                                </div>
+                                
+                                <div style="background: #fafafa; padding: 1.5rem; border-radius: 8px;">
+                                    <h5>自然场景OCR管线</h5>
+                                    <div style="font-size: 0.85rem; margin-bottom: 1rem; color: #555;">
+                                        <strong>核心创新：</strong>Synthtext-pipeline系统化文本图像合成方法
+                                    </div>
+                                    <ul style="font-size: 0.9rem;"><li><strong>背景筛选：</strong>轻量级OCR模型+图像类型检测剔除含文本/非静态样本</li>
+                                        <li><strong>场景理解：</strong>语义分割模型+单目深度估计获取区域划分与3D结构</li>
+                                        <li><strong>真实投影：</strong>平面检测+透视投影+随机文本样式自然投影</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- 技术特色3：大规模昆仑卡训练 -->
+                    <div id="kunlun-training" class="tech-highlight-detail">
+                        <h3>大规模昆仑卡并行训练</h3>
+                        <p>基于百度自研昆仑芯P800芯片，构建了业界领先的超大规模分布式训练体系，通过创新的并行策略和算子优化实现高效训练</p>
+                        
+                        <!-- 集群规模与数据规模 -->
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-top: 2rem;">
+                            <div style="background: #f5f5f5; padding: 0.75rem 1.5rem; border-radius: 8px; text-align: center;">
+                                <h4 style="margin-bottom: 0.25rem; font-size: 1rem;">集群卡规模</h4>
+                                <div style="font-size: 1.75rem; font-weight: bold; color: #007bff; margin: 0.25rem 0;">5000+</div>
+                                <div style="margin-top: 0.25rem; font-size: 0.9rem;">昆仑芯P800并行</div>
+                            </div>
+                            <div style="background: #f5f5f5; padding: 0.75rem 1.5rem; border-radius: 8px; text-align: center;">
+                                <h4 style="margin-bottom: 0.25rem; font-size: 1rem;">训练数据规模</h4>
+                                <div style="font-size: 1.75rem; font-weight: bold; color: #28a745; margin: 0.25rem 0;">3T</div>
+                                <div style="margin-top: 0.25rem; font-size: 0.9rem;">Tokens训练数据</div>
+                            </div>
+                            <div style="background: #f5f5f5; padding: 0.75rem 1.5rem; border-radius: 8px; text-align: center;">
+                                <h4 style="margin-bottom: 0.25rem; font-size: 1rem;">扩展效率</h4>
+                                <div style="font-size: 1.75rem; font-weight: bold; color: #6f42c1; margin: 0.25rem 0;">90%+</div>
+                                <div style="margin-top: 0.25rem; font-size: 0.9rem;">大规模集群扩展效率</div>
+                            </div>
+                        </div>
+
+                        <!-- 3D并行训练策略 -->
+                        <div style="margin-top: 2rem;">
+                            <h4>3D并行训练策略</h4>
+                            <p>采用数据并行(DP)、张量并行(TP)、流水线并行(PP)三维并行组合，通过动态负载均衡根据模型层特性优化分布。梯度同步优化使AllReduce通信时间减少60%，结合ZeRO-3状态分片技术实现内存优化。流水线调度采用1F1B策略，气泡率控制在5%以下，序列维度切分使长序列训练内存占用减半，动态批次根据序列长度自适应调整批大小，并通过选择性激活重计算进行检查点优化。</p>
+                        </div>
+
+                        <!-- 昆仑芯通算融合技术 -->
+                        <div style="margin-top: 2rem;">
+                            <h4>昆仑芯通算融合技术</h4>
+                            <p><strong>架构优势：</strong>P800架构中通信算子与矩阵乘法算子分属不同硬件单元，与传统GPGPU架构形成显著差异。在传统GPU架构中，通信和计算往往竞争相同的硬件资源，导致执行时的相互阻塞。而P800架构通过专用的通信处理单元和矩阵乘法处理单元的硬件分离设计，实现了真正的通信计算并行。这种设计带来的核心优势在于资源隔离，通信算子执行完全不受矩阵乘法算子影响，避免了传统架构中的资源竞争。同时，通过并行执行机制，可同时进行数据传输和矩阵运算，显著提升硬件利用率。更重要的是，这种架构能够通过overlap技术，将通信延迟与计算过程进行互相掩盖。</p>
+                            
+                            <p><strong>GEMM通算融合技术：</strong>通过建立额外的旁路stream(BypassStream），我们可在矩阵乘法运算前后无缝接入通信算子。这种机制的核心思想是建立独立的调度系统，旁路stream独立于主计算stream运行，不会阻塞主要的矩阵乘法流水线。同时，通过数据预取机制，提前启动数据通信，确保计算所需数据及时到位。在计算完成后，立即启动结果的通信传输，形成完整的流水线。</p>
+                            
+                            <p><strong>多流优化实现：</strong>以AllGather与矩阵乘法融合为例，通过精细数据分块策略，实现计算与通信的深度融合。传统方式需要先完成完整的AllGather操作，等待所有数据传输完成后才能开始GEMM计算。而融合方式将数据分解为多个块，每个数据块在通信完成后立即启动对应的计算，形成流水线并行。当通信算子准备好原子数据块后，矩阵乘法可立即启动运算，无需等待全部数据就绪，实现真正的流水线并行。</p>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+
+
+            <section id="applications" class="section">
+                <h2>场景案例展示</h2>
+                
+                <div class="capabilities-container">
+                    <!-- Tab Navigation -->
+                    <div class="capability-tabs">
+                        <button class="capability-tab active" data-tab="ocr">OCR识别</button>
+                        <button class="capability-tab" data-tab="math">数学推理</button>
+                        <button class="capability-tab" data-tab="document">文档理解</button>
+                        <button class="capability-tab" data-tab="chart">图表分析</button>
+                        <button class="capability-tab" data-tab="video">视频理解</button>
+                    </div>
+
+                    <!-- Tab Content -->
+                    <div class="capability-panels">
+                        <!-- OCR Panel -->
+                        <div class="capability-panel active" id="ocr-panel">
+                            <div class="carousel-container">
+                                <button class="carousel-btn carousel-prev" aria-label="Previous">‹</button>
+                                <div class="carousel-wrapper">
+                                    <div class="carousel-track">
+                                        <!-- Handwritten OCR -->
+                                        <div class="capability-card">
+                                            <h4>手写文字识别</h4>
+                                            <div class="showcase-content">
+                                                <div class="showcase-image">
+                                                    <img src="images/handwritten_recognition.png" alt="手写文字示例">
+                                                </div>
+                                                <div class="showcase-dialogue">
+                                                    <div class="user-prompt">
+                                                        <strong>用户：</strong> 识别图中的文字
+                                                    </div>
+                                                    <div class="model-response">
+                                                        <strong>Qianfan-VL：</strong> 征衣未解再跨鞍，接续奋斗开新局。中国青年作为中国大厦的不朽钢钉，中国革命的燎原火种，中国故事的青春注脚，接过时代的话筒，当有对答世界的音量，让中国声音燎亮东方。奋斗圆梦，再谱华章！
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Scene OCR -->
+                                        <div class="capability-card">
+                                            <h4>场景文字识别</h4>
+                                            <div class="showcase-content">
+                                                <div class="showcase-image">
+                                                    <img src="images/scene_ocr.png" alt="街景文字">
+                                                </div>
+                                                <div class="showcase-dialogue">
+                                                    <div class="user-prompt">
+                                                        <strong>用户：</strong> 请识别图中文字
+                                                    </div>
+                                                    <div class="model-response">
+                                                        <strong>Qianfan-VL：</strong> 实景现房中赫出品 <br>
+                                                            颐和园公园南门800米/北侧距万柳高尔夫80米 <br>
+                                                            心30米/距地铁巴沟站C出口10米 <br>
+                                                            T·6271
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Invoice Extraction -->
+                                        <div class="capability-card">
+                                            <h4>票据信息提取</h4>
+                                            <div class="showcase-content">
+                                                <div class="showcase-image">
+                                                    <img src="images/information_extraction.jpeg" alt="发票">
+                                                </div>
+                                                <div class="showcase-dialogue">
+                                                    <div class="user-prompt">
+                                                        <strong>用户：</strong> 提取发票信息
+                                                    </div>
+                                                    <div class="model-response">
+                                                        <strong>Qianfan-VL：</strong> 
+                                                        <pre>{
+  "发票号码": "0110020001",
+  "开票日期": "2021年10月", 
+  "合计": "1565.05",
+  "价税合计": "1580.70",
+  "项目列表": [
+    {"项目名称": "成药*安宫牛黄丸", "数量": "1", "金额": "749.11"},
+    {"项目名称": "成药*益安宁丸", "数量": "1", "金额": "758.71"},
+    {"项目名称": "学药品制剂*藿香正气软胶囊", "数量": "2", "金额": "57.23"}
+  ]
+}</pre>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <button class="carousel-btn carousel-next" aria-label="Next">›</button>
+                            </div>
+                        </div>
+
+                        <!-- Math Panel -->
+                        <div class="capability-panel" id="math-panel">
+                            <div class="carousel-container">
+                                <button class="carousel-btn carousel-prev" aria-label="Previous">‹</button>
+                                <div class="carousel-wrapper">
+                                    <div class="carousel-track">
+                                        <div class="capability-card">
+                                            <h4>二次函数解题</h4>
+                                            <div class="showcase-content">
+                                                <div class="showcase-image">
+                                                    <img src="images/geometry_new.png" alt="二次函数几何题">
+                                                </div>
+                                                <div class="showcase-dialogue">
+                                                    <div class="user-prompt">
+                                                        <strong>用户：</strong> 帮我求解这道题，给出详细步骤。
+                                                    </div>
+                                                    <div class="model-response" style="max-height: 400px; overflow-y: auto;">
+                                                        <strong>Qianfan-VL：</strong> 用户现在需要解决这个二次函数的问题，题目分为两问。首先，我需要仔细阅读题目，理解已知条件和需要求解的内容。题目给出的是二次函数\( y = -x^2 + 2mx + 2m + 1 \)，其中\( m > 0 \)，图像与x轴交于A、B两点（A在B左侧），与y轴交于C点，顶点为D，对称轴与线段BC交于E，与x轴交于F，连接AC、BD。第一问要求求A、B、C三点的坐标（用数字或含m的式子表示），并求∠OBC的度数；第二问若∠ACO=∠CBD，求m的值。
+                                                        
+                                                        <div style="background: #f8f9fa; padding: 1rem; border-radius: 4px; margin: 0.5rem 0;">
+                                                            <strong>第一问：求A、B、C三点坐标</strong><br>
+                                                            <strong>求A、B坐标：</strong>与x轴交点需解方程\( -x^2 + 2mx + 2m + 1 = 0 \)<br>
+                                                            使用求根公式：\( x = \frac{-2m \pm \sqrt{4m^2 + 8m + 4}}{-2} = \frac{-2m \pm \sqrt{(2m + 2)^2}}{-2} \)<br>
+                                                            因为\( m > 0 \)，所以\( \sqrt{(2m + 2)^2} = 2m + 2 \)<br>
+                                                            第一个解：\( x = \frac{-2m + 2m + 2}{-2} = -1 \)<br>
+                                                            第二个解：\( x = \frac{-2m - (2m + 2)}{-2} = 2m + 1 \)<br>
+                                                            因此：<strong>A(-1, 0)</strong>，<strong>B(2m + 1, 0)</strong><br><br>
+                                                            <strong>求C坐标：</strong>与y轴交点，令x=0得：\( y = 2m + 1 \)<br>
+                                                            因此：<strong>C(0, 2m + 1)</strong>
+                                                        </div>
+                                                        
+                                                        <div style="background: #f0f8ff; padding: 1rem; border-radius: 4px; margin: 0.5rem 0;">
+                                                            <strong>求∠OBC的度数</strong><br>
+                                                            在三角形OBC中：<br>
+                                                            • OB = 2m + 1（B点到原点距离）<br>
+                                                            • OC = 2m + 1（C点到原点距离）<br>
+                                                            • BC = \( \sqrt{(2m + 1)^2 + (2m + 1)^2} = (2m + 1)\sqrt{2} \)<br><br>
+                                                            因为OB = OC且OB² + OC² = BC²，所以三角形OBC是等腰直角三角形<br>
+                                                            因此：<strong>∠OBC = 45°</strong>
+                                                        </div>
+                                                        
+                                                        <div style="background: #fff8dc; padding: 1rem; border-radius: 4px; margin: 0.5rem 0;">
+                                                            <strong>第二问：若∠ACO=∠CBD，求m的值</strong><br>
+                                                            首先求顶点D坐标：\( D(m, (m + 1)^2) \)<br><br>
+                                                            <strong>求∠ACO的正切值：</strong><br>
+                                                            在直角三角形ACO中，∠ACO的对边AO=1，邻边CO=2m+1<br>
+                                                            \( \tan(\angle ACO) = \frac{AO}{CO} = \frac{1}{2m + 1} \)<br><br>
+                                                            <strong>求∠CBD的正切值：</strong><br>
+                                                            直线BC斜率：\( k_{BC} = \frac{2m + 1}{-(2m + 1)} = -1 \)<br>
+                                                            直线BD斜率：\( k_{BD} = \frac{(m + 1)^2}{m - (2m + 1)} = -(m + 1) \)<br>
+                                                            \( \tan(\angle CBD) = \left| \frac{-(m + 1) - (-1)}{1 + (-1)[-(m + 1)]} \right| = \frac{m}{m + 2} \)
+                                                        </div>
+                                                        
+                                                        <div style="background: #e8f5e8; padding: 1rem; border-radius: 4px; margin: 0.5rem 0;">
+                                                            <strong>解方程：</strong><br>
+                                                            因为∠ACO = ∠CBD，所以：\( \frac{1}{2m + 1} = \frac{m}{m + 2} \)<br>
+                                                            交叉相乘：\( m + 2 = m(2m + 1) \)<br>
+                                                            整理得：\( m + 2 = 2m^2 + m \)<br>
+                                                            化简：\( 2m^2 = 2 \Rightarrow m^2 = 1 \)<br>
+                                                            因为\( m > 0 \)，所以：<strong>m = 1</strong><br><br>
+                                                            <strong>验证：</strong>当m=1时，\( \tan(\angle ACO) = \frac{1}{3} \)，\( \tan(\angle CBD) = \frac{1}{3} \)，相等<br><br>
+                                                            <strong>答案：</strong><span style="border: 2px solid #333; padding: 0.25rem 0.5rem; border-radius: 4px;">m = 1</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="capability-card">
+                                            <h4>数学公式识别</h4>
+                                            <div class="showcase-content">
+                                                <div class="showcase-image">
+                                                    <img src="images/math_equation_recognition.jpg" alt="数学公式">
+                                                </div>
+                                                <div class="showcase-dialogue">
+                                                    <div class="user-prompt">
+                                                        <strong>用户：</strong> 将图中的公式转换为LaTeX
+                                                    </div>
+                                                    <div class="model-response">
+                                                        <strong>Qianfan-VL：</strong> 
+                                                        <div style="word-wrap: break-word; word-break: break-all; white-space: normal; overflow-wrap: break-word;">
+                                                            \begin{align*}r_d(G):=\sum_{F\in\mathcal{F}_G^+}\frac{R_d(F)}{d_F^2},\end{align*}
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div style="margin: 1rem 0;">
+                                                        <strong>渲染效果：</strong>
+                                                    </div>
+                                                    <div style="background: white; padding: 1rem; border: 1px solid #ddd; border-radius: 4px; text-align: center; margin: 0.5rem 0;">
+                                                        <img src="images/math_equation_rec.png" alt="渲染的数学公式" style="max-width: 100%; height: auto;">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="carousel-btn carousel-next" aria-label="Next">›</button>
+                            </div>
+                        </div>
+
+                        <!-- Document Panel -->
+                        <div class="capability-panel" id="document-panel">
+                            <div class="carousel-container">
+                                <button class="carousel-btn carousel-prev" aria-label="Previous">‹</button>
+                                <div class="carousel-wrapper">
+                                    <div class="carousel-track">
+                                        <div class="capability-card">
+                                            <h4>文档内容理解</h4>
+                                            <div class="showcase-content">
+                                                <div class="showcase-image">
+                                                    <img src="images/document_content_understanding.png" alt="复杂文档">
+                                                </div>
+                                                <div class="showcase-dialogue">
+                                                    <div class="user-prompt">
+                                                        <strong>用户：</strong> 根据文档内容，中国银监会在文件中强调了对商业性房地产信贷的哪些具体管理要求？这些要求对银行的风险控制有何影响？
+                                                    </div>
+                                                    <div class="model-response">
+                                                        <strong>Qianfan-VL：</strong> 文件提出了四项核心要求：1）严格房地产开发贷款管理，限制资金流向未合规项目；2）规范土地储备贷款，限制贷款比例和期限；3）加强住房消费贷款管理，实施差异化首付比例和利率；4）严控商业用房贷款。这些要求通过限制资金过度流入房地产、提高贷款门槛和差异化定价，有效降低了银行信贷风险，防止了房地产泡沫。
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="capability-card">
+                                            <h4>表格结构理解</h4>
+                                            <div class="showcase-content">
+                                                <div class="showcase-image">
+                                                    <img src="images/table_understanding.png" alt="复杂表格">
+                                                </div>
+                                                <div class="showcase-dialogue">
+                                                    <div class="user-prompt">
+                                                        <strong>用户：</strong> 你是一位文档解析处理领域的专家，请仔细阅读并理解以下文档截图，将其解析为HTML。遵循以下要求：解析结果中表格行合并、列合并跨度需要与文档一致，使用colspan、rowspan属性来表达；保留表头、文档正文等非表格内容；HTML渲染后的阅读体验必须与文档截图完全一致。
+                                                    </div>
+                                                    <div class="model-response">
+                                                        <strong>Qianfan-VL：</strong> 
+                                                        <div style="margin: 1rem 0;">
+                                                            <strong>HTML代码：</strong>
+                                                        </div>
+                                                        <pre>&lt;table border="1"&gt;
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th&gt;项目&lt;/th&gt; &lt;th&gt;期末余额&lt;/th&gt; &lt;th&gt;年初余额&lt;/th&gt;
+        &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+        &lt;tr&gt;  &lt;td colspan="3"&gt;流动资产：&lt;/td&gt;  &lt;/tr&gt;
+        &lt;tr&gt;  &lt;td&gt;货币资金&lt;/td&gt; &lt;td&gt;5,288,011,738.39&lt;/td&gt; &lt;td&gt;2,629,981,089.49&lt;/td&gt;  &lt;/tr&gt;
+        &lt;tr&gt;  &lt;td&gt;结算备付金&lt;/td&gt; &lt;td&gt;&lt;/td&gt; &lt;td&gt;&lt;/td&gt;  &lt;/tr&gt;
+        &lt;tr&gt;  &lt;td&gt;拆出资金&lt;/td&gt; &lt;td&gt;&lt;/td&gt; &lt;td&gt;&lt;/td&gt;  &lt;/tr&gt;
+        &lt;tr&gt;  &lt;td&gt;以公允价值计量且其变动计入当期损益的金融资产&lt;/td&gt; &lt;td&gt;3,226,301.37&lt;/td&gt; &lt;td&gt;6,830,273.97&lt;/td&gt;  &lt;/tr&gt;
+        &lt;tr&gt;  &lt;td&gt;衍生金融资产&lt;/td&gt; &lt;td&gt;&lt;/td&gt; &lt;td&gt;&lt;/td&gt;  &lt;/tr&gt;
+        &lt;tr&gt;  &lt;td&gt;应收票据&lt;/td&gt; &lt;td&gt;1,010,636.94&lt;/td&gt; &lt;td&gt;888,800.00&lt;/td&gt;  &lt;/tr&gt;
+        &lt;tr&gt;  &lt;td&gt;应收账款&lt;/td&gt; &lt;td&gt;389,409,537.65&lt;/td&gt; &lt;td&gt;290,733,812.62&lt;/td&gt;  &lt;/tr&gt;
+        &lt;tr&gt;  &lt;td&gt;预付款项&lt;/td&gt; &lt;td&gt;474,301,533.93&lt;/td&gt; &lt;td&gt;509,510,514.92&lt;/td&gt;  &lt;/tr&gt;
+        &lt;tr&gt;  &lt;td&gt;应收保费&lt;/td&gt; &lt;td&gt;&lt;/td&gt; &lt;td&gt;&lt;/td&gt;  &lt;/tr&gt;
+        &lt;tr&gt;  &lt;td&gt;应收分保账款&lt;/td&gt; &lt;td&gt;&lt;/td&gt; &lt;td&gt;&lt;/td&gt;  &lt;/tr&gt;
+        &lt;tr&gt;  &lt;td&gt;应收分保合同准备金&lt;/td&gt; &lt;td&gt;&lt;/td&gt; &lt;td&gt;&lt;/td&gt;  &lt;/tr&gt;
+        &lt;tr&gt;  &lt;td&gt;应收利息&lt;/td&gt; &lt;td&gt;8,746,899.35&lt;/td&gt; &lt;td&gt;1,645,890.39&lt;/td&gt;  &lt;/tr&gt;
+        &lt;tr&gt;  &lt;td&gt;应收股利&lt;/td&gt; &lt;td&gt;&lt;/td&gt; &lt;td&gt;&lt;/td&gt;  &lt;/tr&gt;
+        &lt;tr&gt;  &lt;td&gt;其他应收款&lt;/td&gt; &lt;td&gt;291,499,926.83&lt;/td&gt; &lt;td&gt;364,426,205.02&lt;/td&gt;  &lt;/tr&gt;
+        &lt;tr&gt;  &lt;td&gt;买入返售金融资产&lt;/td&gt; &lt;td&gt;&lt;/td&gt; &lt;td&gt;&lt;/td&gt;  &lt;/tr&gt;
+        &lt;tr&gt;  &lt;td&gt;存货&lt;/td&gt; &lt;td&gt;69,558,687.59&lt;/td&gt; &lt;td&gt;79,651,862.50&lt;/td&gt;  &lt;/tr&gt;
+        &lt;tr&gt;  &lt;td&gt;划分为持有待售的资产&lt;/td&gt; &lt;td&gt;&lt;/td&gt; &lt;td&gt;&lt;/td&gt;  &lt;/tr&gt;
+        &lt;tr&gt;  &lt;td&gt;一年内到期的非流动资产&lt;/td&gt; &lt;td&gt;&lt;/td&gt; &lt;td&gt;&lt;/td&gt;  &lt;/tr&gt;
+        &lt;tr&gt;  &lt;td&gt;其他流动资产&lt;/td&gt; &lt;td&gt;533,938,653.95&lt;/td&gt; &lt;td&gt;545,184,036.20&lt;/td&gt;  &lt;/tr&gt;
+        &lt;tr&gt;  &lt;td&gt;流动资产合计&lt;/td&gt; &lt;td&gt;7,059,703,916.00&lt;/td&gt; &lt;td&gt;4,428,852,485.11&lt;/td&gt;  &lt;/tr&gt;
+        &lt;tr&gt;  &lt;td colspan="3"&gt;非流动资产：&lt;/td&gt;  &lt;/tr&gt;
+        &lt;tr&gt;  &lt;td&gt;发放贷款和垫款&lt;/td&gt; &lt;td&gt;&lt;/td&gt; &lt;td&gt;&lt;/td&gt;  &lt;/tr&gt;
+        &lt;tr&gt;  &lt;td&gt;可供出售金融资产&lt;/td&gt; &lt;td&gt;981,477,845.00&lt;/td&gt; &lt;td&gt;42,732,350.00&lt;/td&gt;  &lt;/tr&gt;
+        &lt;tr&gt;  &lt;td&gt;持有至到期投资&lt;/td&gt; &lt;td&gt;&lt;/td&gt; &lt;td&gt;&lt;/td&gt;  &lt;/tr&gt;
+        &lt;tr&gt;  &lt;td&gt;长期应收款&lt;/td&gt; &lt;td&gt;&lt;/td&gt; &lt;td&gt;&lt;/td&gt;  &lt;/tr&gt;
+        &lt;tr&gt;  &lt;td&gt;长期股权投资&lt;/td&gt; &lt;td&gt;478,328,423.92&lt;/td&gt; &lt;td&gt;482,914,333.17&lt;/td&gt;  &lt;/tr&gt;
+        &lt;tr&gt;  &lt;td&gt;投资性房地产&lt;/td&gt; &lt;td&gt;&lt;/td&gt; &lt;td&gt;&lt;/td&gt;  &lt;/tr&gt;
+        &lt;tr&gt;  &lt;td&gt;固定资产&lt;/td&gt; &lt;td&gt;11,211,345,599.37&lt;/td&gt; &lt;td&gt;11,517,509,788.66&lt;/td&gt;  &lt;/tr&gt;
+        &lt;tr&gt;  &lt;td&gt;在建工程&lt;/td&gt; &lt;td&gt;344,034,065.45&lt;/td&gt; &lt;td&gt;558,797,792.68&lt;/td&gt;  &lt;/tr&gt;
+    &lt;/tbody&gt;
+&lt;/table&gt;</pre>
+                                                    </div>
+                                                    
+                                                    <div style="margin: 1rem 0;">
+                                                        <strong>渲染效果：</strong>
+                                                    </div>
+                                                    <div style="background: white; padding: 1rem; border: 1px solid #ddd; border-radius: 4px; overflow-x: auto; margin: 0.5rem 0;">
+                                                        <table border="1" style="border-collapse: collapse; width: 100%; font-size: 0.75rem;">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th style="padding: 0.4rem; background: #f5f5f5; border: 1px solid #ccc;">项目</th>
+                                                                    <th style="padding: 0.4rem; background: #f5f5f5; border: 1px solid #ccc;">期末余额</th>
+                                                                    <th style="padding: 0.4rem; background: #f5f5f5; border: 1px solid #ccc;">年初余额</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr><td colspan="3" style="padding: 0.4rem; border: 1px solid #ccc; font-weight: bold; background: #fafafa;">流动资产：</td></tr>
+                                                                <tr><td style="padding: 0.4rem; border: 1px solid #ccc;">货币资金</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right;">5,288,011,738.39</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right;">2,629,981,089.49</td></tr>
+                                                                <tr><td style="padding: 0.4rem; border: 1px solid #ccc; color: #999;">结算备付金</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right; color: #999;">—</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right; color: #999;">—</td></tr>
+                                                                <tr><td style="padding: 0.4rem; border: 1px solid #ccc; color: #999;">拆出资金</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right; color: #999;">—</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right; color: #999;">—</td></tr>
+                                                                <tr><td style="padding: 0.4rem; border: 1px solid #ccc;">以公允价值计量且其变动计入当期损益的金融资产</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right;">3,226,301.37</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right;">6,830,273.97</td></tr>
+                                                                <tr><td style="padding: 0.4rem; border: 1px solid #ccc; color: #999;">衍生金融资产</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right; color: #999;">—</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right; color: #999;">—</td></tr>
+                                                                <tr><td style="padding: 0.4rem; border: 1px solid #ccc;">应收票据</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right;">1,010,636.94</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right;">888,800.00</td></tr>
+                                                                <tr><td style="padding: 0.4rem; border: 1px solid #ccc;">应收账款</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right;">389,409,537.65</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right;">290,733,812.62</td></tr>
+                                                                <tr><td style="padding: 0.4rem; border: 1px solid #ccc;">预付款项</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right;">474,301,533.93</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right;">509,510,514.92</td></tr>
+                                                                <tr><td style="padding: 0.4rem; border: 1px solid #ccc; color: #999;">应收保费</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right; color: #999;">—</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right; color: #999;">—</td></tr>
+                                                                <tr><td style="padding: 0.4rem; border: 1px solid #ccc; color: #999;">应收分保账款</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right; color: #999;">—</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right; color: #999;">—</td></tr>
+                                                                <tr><td style="padding: 0.4rem; border: 1px solid #ccc; color: #999;">应收分保合同准备金</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right; color: #999;">—</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right; color: #999;">—</td></tr>
+                                                                <tr><td style="padding: 0.4rem; border: 1px solid #ccc;">应收利息</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right;">8,746,899.35</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right;">1,645,890.39</td></tr>
+                                                                <tr><td style="padding: 0.4rem; border: 1px solid #ccc; color: #999;">应收股利</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right; color: #999;">—</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right; color: #999;">—</td></tr>
+                                                                <tr><td style="padding: 0.4rem; border: 1px solid #ccc;">其他应收款</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right;">291,499,926.83</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right;">364,426,205.02</td></tr>
+                                                                <tr><td style="padding: 0.4rem; border: 1px solid #ccc; color: #999;">买入返售金融资产</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right; color: #999;">—</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right; color: #999;">—</td></tr>
+                                                                <tr><td style="padding: 0.4rem; border: 1px solid #ccc;">存货</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right;">69,558,687.59</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right;">79,651,862.50</td></tr>
+                                                                <tr><td style="padding: 0.4rem; border: 1px solid #ccc; color: #999;">划分为持有待售的资产</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right; color: #999;">—</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right; color: #999;">—</td></tr>
+                                                                <tr><td style="padding: 0.4rem; border: 1px solid #ccc; color: #999;">一年内到期的非流动资产</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right; color: #999;">—</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right; color: #999;">—</td></tr>
+                                                                <tr><td style="padding: 0.4rem; border: 1px solid #ccc;">其他流动资产</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right;">533,938,653.95</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right;">545,184,036.20</td></tr>
+                                                                <tr><td style="padding: 0.4rem; border: 1px solid #ccc; font-weight: bold;">流动资产合计</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right; font-weight: bold;">7,059,703,916.00</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right; font-weight: bold;">4,428,852,485.11</td></tr>
+                                                                <tr><td colspan="3" style="padding: 0.4rem; border: 1px solid #ccc; font-weight: bold; background: #fafafa;">非流动资产：</td></tr>
+                                                                <tr><td style="padding: 0.4rem; border: 1px solid #ccc; color: #999;">发放贷款和垫款</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right; color: #999;">—</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right; color: #999;">—</td></tr>
+                                                                <tr><td style="padding: 0.4rem; border: 1px solid #ccc;">可供出售金融资产</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right;">981,477,845.00</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right;">42,732,350.00</td></tr>
+                                                                <tr><td style="padding: 0.4rem; border: 1px solid #ccc; color: #999;">持有至到期投资</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right; color: #999;">—</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right; color: #999;">—</td></tr>
+                                                                <tr><td style="padding: 0.4rem; border: 1px solid #ccc; color: #999;">长期应收款</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right; color: #999;">—</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right; color: #999;">—</td></tr>
+                                                                <tr><td style="padding: 0.4rem; border: 1px solid #ccc;">长期股权投资</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right;">478,328,423.92</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right;">482,914,333.17</td></tr>
+                                                                <tr><td style="padding: 0.4rem; border: 1px solid #ccc; color: #999;">投资性房地产</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right; color: #999;">—</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right; color: #999;">—</td></tr>
+                                                                <tr><td style="padding: 0.4rem; border: 1px solid #ccc;">固定资产</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right;">11,211,345,599.37</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right;">11,517,509,788.66</td></tr>
+                                                                <tr><td style="padding: 0.4rem; border: 1px solid #ccc;">在建工程</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right;">344,034,065.45</td><td style="padding: 0.4rem; border: 1px solid #ccc; text-align: right;">558,797,792.68</td></tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="carousel-btn carousel-next" aria-label="Next">›</button>
+                            </div>
+                        </div>
+
+                        <!-- Chart Panel -->
+                        <div class="capability-panel" id="chart-panel">
+                            <div class="carousel-container">
+                                <button class="carousel-btn carousel-prev" aria-label="Previous">‹</button>
+                                <div class="carousel-wrapper">
+                                    <div class="carousel-track">
+                                        <div class="capability-card">
+                                            <h4>图表数据分析</h4>
+                                            <div class="showcase-content">
+                                                <div class="showcase-image">
+                                                    <img src="images/chart_gift_reasoning.jpeg" alt="礼物选择图表">
+                                                </div>
+                                                <div class="showcase-dialogue">
+                                                    <div class="user-prompt">
+                                                        <strong>用户：</strong> 小明是一位男生，下面哪样物品最适合作为他的七夕节礼物 a) Iphone 17 b) Dior香水 c) 一束美丽的鲜花 d) 巧克力套装
+                                                    </div>
+                                                    <div class="model-response">
+                                                        <strong>Qianfan-VL：</strong> 
+                                                        <div style="background: #f0f8ff; padding: 0.75rem; border-radius: 4px; margin: 0.5rem 0; font-size: 0.85rem; border-left: 3px solid #007bff;">
+                                                            <strong>&lt;think&gt;</strong><br>
+                                                            用户现在需要帮小明选七夕节礼物，小明是男生。首先，我需要回忆一下之前提到的男生最想收到的礼物。根据提供的图表，男生最想收到的礼物热度指数最高的是"游戏和游戏配套设备"，热度指数100.00，其次是耳机63.53，键盘63.16，剃须刀58.90，手表57.27，香水47.62，手机44.36，等等。<br><br>现在看选项：a) iphone17，属于手机类，手机在男生中的热度指数是44.36，虽然比香水、手表高，但手机在男生中的热度指数不算特别特别高，尤其是iphone17可能比较贵，而且手机本身在男生中的热度可能不如游戏设备。b) Dior香水，女生最想收到的礼物中香水热度87.13，而男生对香水的热度只有47.62，明显男生对香水的兴趣较低，所以女生送的香水可能不太适合男生。c) 一束美丽的鲜花，图表中女生最想收到的礼物有花，热度41.22，但男生对花的兴趣可能不高，通常男生可能不太喜欢收到花作为礼物。d) 巧克力套装，女生最想收到的礼物有巧克力，热度42.48，同样男生对巧克力的兴趣可能不如游戏设备、耳机等。<br><br>不过这里可能需要考虑，七夕节女生送男生礼物，通常男生更喜欢的可能是实用或兴趣相关的。游戏和游戏设备热度最高，但选项里没有游戏设备，剩下的手机（iphone17）属于电子产品，可能比香水、巧克力、鲜花更合适。虽然手机在男生中的热度指数44.36，但相比其他选项，可能巧克力套装（d）热度42.48，手机（a）44.36，可能手机稍微高一点？不过需要确认选项中的手机是否是男生喜欢的类型。另外，七夕节男生可能更期待实用或有意义的礼物，手机作为电子产品，可能比香水、鲜花更受欢迎，因为香水男生可能不太喜欢，花可能觉得俗，巧克力套装虽然女生喜欢，但男生可能觉得普通。而游戏设备虽然热度最高，但选项里没有，所以只能从现有选项中选择。因此，可能选项a) iphone17更适合，因为手机在男生中的热度比香水、巧克力、鲜花高，虽然不如游戏设备，但其他选项更次。<br>
+                                                            <strong>&lt;/think&gt;</strong>
+                                                        </div>
+                                                        
+                                                        <div style="background: #f8f9fa; padding: 1rem; border-radius: 4px; margin: 0.5rem 0;">
+                                                            <strong>&lt;answer&gt;</strong><br>
+                                                            根据图表数据，男生最想收到的礼物中，<strong>手机</strong>的热度指数为44.36，高于香水（47.62）、巧克力套装（42.48）和鲜花（41.22）。<br><br>
+                                                            
+                                                            选项分析：<br>
+                                                            - <strong>a) iphone17</strong>：属于手机类，符合男生对电子产品的偏好，热度指数在男生礼物中处于较高水平（仅次于游戏设备）。<br>
+                                                            - <strong>b) Dior香水</strong>：女生对香水的热度（87.13）远高于男生（47.62），且男生对香水的兴趣较低。<br>
+                                                            - <strong>c) 一束美丽的鲜花</strong>：男生对花的兴趣明显低于女生（男生花的热度41.22），通常不被视为男生偏好的礼物。<br>
+                                                            - <strong>d) 巧克力套装</strong>：女生对巧克力的热度（42.48）高于男生（47.62），且巧克力作为礼物更偏向"大众化"，而非男生核心兴趣。<br><br>
+                                                            
+                                                            <strong>最适合的礼物是a) iphone17</strong><br>
+                                                            <strong>答案：a</strong><br>
+                                                            <strong>&lt;/answer&gt;</strong>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="capability-card">
+                                            <h4>股票走势分析</h4>
+                                            <div class="showcase-content">
+                                                <div class="showcase-image">
+                                                    <img src="images/chart_stock_elaboration.png" alt="上证指数">
+                                                </div>
+                                                <div class="showcase-dialogue">
+                                                    <div class="user-prompt">
+                                                        <strong>用户：</strong> 描述8月27号的走势
+                                                    </div>
+                                                    <div class="model-response">
+                                                        <strong>Qianfan-VL：</strong> 8月27日，上证指数全天呈现震荡下跌走势。开盘后指数在3869.61点起步，最高触及3887.20点，随后逐步回落。早盘维持震荡整理态势，午市后跌幅逐渐扩大，最终收于3800.35点，下跌68.03点，跌幅1.76%。全天成交量达8.59亿手，成交额为1.33万亿元，市场交投活跃。从分时图看，指数在午后14:30左右出现明显跳水，跌幅进一步扩大，最终以全日低点收盘。
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="carousel-btn carousel-next" aria-label="Next">›</button>
+                            </div>
+                        </div>
+
+                        <!-- Video Panel -->
+                        <div class="capability-panel" id="video-panel">
+                            <div class="carousel-container">
+                                <button class="carousel-btn carousel-prev" aria-label="Previous">‹</button>
+                                <div class="carousel-wrapper">
+                                    <div class="carousel-track">
+                                        <div class="capability-card">
+                                            <h4>视频理解</h4>
+                                            <div class="showcase-content">
+                                                <div class="showcase-image">
+                                                    <video controls poster="images/video_understanding_thumbnail.jpg" style="width: 100%; max-height: 280px; cursor: pointer;">
+                                                        <source src="images/video_understanding.mp4" type="video/mp4">
+                                                        您的浏览器不支持视频播放。
+                                                    </video>
+                                                    <div style="text-align: center; font-size: 0.8rem; color: #666; margin-top: 0.5rem;">
+                                                        点击播放视频
+                                                    </div>
+                                                </div>
+                                                <div class="showcase-dialogue">
+                                                    <div class="user-prompt">
+                                                        <strong>用户：</strong> 请描述一下视频中的内容
+                                                    </div>
+                                                    <div class="model-response">
+                                                        <strong>Qianfan-VL：</strong> 在这段宁静祥和的视频中，一片宽阔的湖泊映入眼帘，湖面波光粼粼，反射着温暖的阳光，形成闪烁的光斑。几艘小船散布在湖面上，有的靠近岸边，有的在湖心悠然行驶，船上的人们沉浸在这片宁静之中。远处，茂密的树林和连绵起伏的山脉构成了一幅美丽的画卷，天空晴朗，淡蓝色的天幕下，偶尔可见一座塔楼矗立在山间。随着镜头的缓慢移动，更多细节逐渐展现，阳光照射在水面上，闪烁着耀眼的光芒，整个场景充满了自然之美和平和的气息。这段视频不仅展示了大自然的宁静与和谐，还让人感受到一种悠闲自在的生活方式，仿佛置身于一幅动人的山水画中。
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="carousel-btn carousel-next" aria-label="Next">›</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="api" class="section">
+                <h2>快速开始</h2>
+                
+                <h3 id="examples">功能示例代码</h3>
+                <p>完整的使用示例和代码请参考我们的Cookbook：<a href="https://github.com/baidubce/qianfan-models-cookbook/blob/main/qianfan-vl/qianfan_vl_example.ipynb" target="_blank">Qianfan-VL Example Notebook</a></p>
+
+                <h3 id="api-params">API参数说明</h3>
+                <p>详细的API参数说明和调用文档请参考：<a href="https://cloud.baidu.com/doc/qianfan-docs/s/Fm9l6ocai" target="_blank">千帆ModelBuilder API文档</a></p>
+            </section>
+
+            <section id="conclusion" class="section">
+                <h2>总结</h2>
+                
+                <p>
+                    <strong>Qianfan-VL定位为领域增强的通用多模态大语言模型</strong>，提供3B、8B、70B多种规格，实现多尺寸、全场景应用覆盖。围绕B端客户需求，重点增强了智能办公和K12教育场景的多项任务能力，包括OCR识别、文档解析、拍照解题、图表理解、复杂表格解析等。面对需要复杂推理的场景，可在8B和70B模型上开启思考功能，进一步增强模型效果。
+                </p>
+                
+                <p>
+                    <strong>技术层面采用多阶段渐进式的持续预训练技术</strong>，在维持通用能力的基础上不断增强领域精专数据的配比，进而实现领域能力的显著提升。基于传统小模型和程序化合成的方法，Qianfan-VL团队构建了大量高精度的训练数据，显著提高了长尾场景的数据密度，提升了模型泛化性。所有尺寸模型都在5000+昆仑芯片加持下的大规模并行训练中完成，并且这些模型可在昆仑芯、GPU等芯片上进行高效率推理。
+                </p>
+                
+                <p>
+                    <strong>Qianfan-VL系列模型在各个同尺寸参数量的模型中具备良好的通用性</strong>，并且在精专的领域benchmark上有出色表现，在实际业务的benchmark中表现更佳。通过领域增强技术路线，Qianfan-VL为企业级多模态AI应用提供了兼具通用性和专业性的高性能解决方案。
+                </p>
+
+            </section>
+        </div>
+    </main>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+</body>
+</html>

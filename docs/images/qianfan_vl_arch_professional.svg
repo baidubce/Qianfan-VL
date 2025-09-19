@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1000" height="450" viewBox="0 0 1000 450" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1000" height="450" fill="#ffffff"/>
+  
+  <!-- Title -->
+  <text x="500" y="25" text-anchor="middle" font-family="Times, serif" font-size="20" font-weight="bold" fill="#000000">Qianfan-VL: Multi-modal Architecture</text>
+  
+  <!-- Input Images -->
+  <rect x="100" y="50" width="140" height="110" fill="#ffffff" stroke="#000000" stroke-width="1"/>
+  <text x="170" y="75" text-anchor="middle" font-family="Times, serif" font-size="11" font-weight="bold" fill="#000000">Visual Input</text>
+  <text x="170" y="95" text-anchor="middle" font-family="Times, serif" font-size="9" fill="#666666">Single Image</text>
+  <text x="170" y="110" text-anchor="middle" font-family="Times, serif" font-size="9" fill="#666666">Multiple Images</text>
+  <text x="170" y="125" text-anchor="middle" font-family="Times, serif" font-size="9" fill="#666666">Video Frames</text>
+  
+  <!-- Vision Encoder (Core Model Component) -->
+  <rect x="270" y="50" width="140" height="110" fill="#cce7ff" stroke="#000000" stroke-width="1"/>
+  <text x="340" y="75" text-anchor="middle" font-family="Times, serif" font-size="12" font-weight="bold" fill="#000000">Vision Encoder</text>
+  <text x="340" y="95" text-anchor="middle" font-family="Times, serif" font-size="11" font-weight="normal" fill="#000000">Based on InternViT</text>
+  <text x="340" y="115" text-anchor="middle" font-family="Times, serif" font-size="9" fill="#333333">Dynamic Patching</text>
+  <text x="340" y="130" text-anchor="middle" font-family="Times, serif" font-size="9" fill="#333333">4K Resolution</text>
+  
+  <!-- MLP Adapter (Core Model Component) -->
+  <rect x="440" y="85" width="120" height="40" fill="#cce7ff" stroke="#000000" stroke-width="1"/>
+  <text x="500" y="102" text-anchor="middle" font-family="Times, serif" font-size="11" font-weight="bold" fill="#000000">MLP Adapter</text>
+  <text x="500" y="117" text-anchor="middle" font-family="Times, serif" font-size="9" fill="#000000">Cross-modal</text>
+  
+  <!-- Text Input -->
+  <rect x="100" y="200" width="140" height="100" fill="#ffffff" stroke="#000000" stroke-width="1"/>
+  <text x="170" y="235" text-anchor="middle" font-family="Times, serif" font-size="11" font-weight="bold" fill="#000000">Text Input</text>
+  <text x="170" y="255" text-anchor="middle" font-family="Times, serif" font-size="9" fill="#666666">Instructions</text>
+  <text x="170" y="275" text-anchor="middle" font-family="Times, serif" font-size="9" fill="#666666">Query</text>
+  
+  <!-- Language Model (Core Model Component) -->
+  <rect x="270" y="200" width="300" height="100" fill="#cce7ff" stroke="#000000" stroke-width="1"/>
+  <text x="420" y="225" text-anchor="middle" font-family="Times, serif" font-size="13" font-weight="bold" fill="#000000">Language Model (LLM)</text>
+  <text x="420" y="245" text-anchor="middle" font-family="Times, serif" font-size="11" font-weight="normal" fill="#000000">Based on Llama 3.1</text>
+  <text x="420" y="265" text-anchor="middle" font-family="Times, serif" font-size="9" fill="#333333">3T Chinese-English Corpus</text>
+  <text x="420" y="280" text-anchor="middle" font-family="Times, serif" font-size="9" fill="#333333">Extended Vocabulary</text>
+  <text x="420" y="295" text-anchor="middle" font-family="Times, serif" font-size="9" fill="#333333">Multi-modal Understanding</text>
+  
+  <!-- Chain-of-Thought (Optional Feature) -->
+  <rect x="610" y="180" width="100" height="40" fill="#ffffff" stroke="#000000" stroke-width="1" stroke-dasharray="4,4"/>
+  <text x="660" y="197" text-anchor="middle" font-family="Times, serif" font-size="10" font-weight="bold" fill="#000000">CoT</text>
+  <text x="660" y="212" text-anchor="middle" font-family="Times, serif" font-size="9" fill="#666666">Reasoning</text>
+  
+  <!-- Output -->
+  <rect x="750" y="200" width="140" height="100" fill="#ffffff" stroke="#000000" stroke-width="1"/>
+  <text x="820" y="235" text-anchor="middle" font-family="Times, serif" font-size="11" font-weight="bold" fill="#000000">Output</text>
+  <text x="820" y="255" text-anchor="middle" font-family="Times, serif" font-size="9" fill="#666666">Response</text>
+  <text x="820" y="275" text-anchor="middle" font-family="Times, serif" font-size="9" fill="#666666">Analysis</text>
+  
+  <!-- Arrows -->
+  <defs>
+    <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#000000"/>
+    </marker>
+  </defs>
+  
+  <!-- Visual Input to Vision Encoder -->
+  <path d="M 240 105 L 270 105" stroke="#000000" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Vision Encoder to MLP -->
+  <path d="M 410 105 L 440 105" stroke="#000000" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- MLP to LLM -->
+  <path d="M 500 125 L 500 200" stroke="#000000" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Text to LLM -->
+  <path d="M 240 250 L 270 250" stroke="#000000" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- LLM to CoT (Optional) -->
+  <path d="M 570 230 L 610 200" stroke="#000000" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)" stroke-dasharray="4,4"/>
+  
+  <!-- CoT to Output (Optional) -->
+  <path d="M 710 200 L 750 240" stroke="#000000" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)" stroke-dasharray="4,4"/>
+  
+  <!-- LLM to Output (Direct) -->
+  <path d="M 570 250 L 750 250" stroke="#000000" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Model Variants -->
+  <rect x="100" y="330" width="800" height="80" fill="#ffffff" stroke="#000000" stroke-width="1"/>
+  <text x="500" y="350" text-anchor="middle" font-family="Times, serif" font-size="12" font-weight="bold" fill="#000000">Model Variants</text>
+  
+  <!-- 3B Model -->
+  <rect x="150" y="365" width="200" height="30" fill="#f0f6ff" stroke="#000000" stroke-width="1"/>
+  <text x="250" y="378" text-anchor="middle" font-family="Times, serif" font-size="10" font-weight="bold" fill="#000000">Qianfan-VL-3B</text>
+  <text x="250" y="390" text-anchor="middle" font-family="Times, serif" font-size="8" fill="#333333">Edge • OCR • 32K Context</text>
+  
+  <!-- 8B Model -->
+  <rect x="400" y="365" width="200" height="30" fill="#b3d9ff" stroke="#000000" stroke-width="1"/>
+  <text x="500" y="378" text-anchor="middle" font-family="Times, serif" font-size="10" font-weight="bold" fill="#000000">Qianfan-VL-8B</text>
+  <text x="500" y="390" text-anchor="middle" font-family="Times, serif" font-size="8" fill="#000000">General • CoT • 32K Context</text>
+  
+  <!-- 70B Model -->
+  <rect x="650" y="365" width="200" height="30" fill="#4da6ff" stroke="#000000" stroke-width="1"/>
+  <text x="750" y="378" text-anchor="middle" font-family="Times, serif" font-size="10" font-weight="bold" fill="#000000">Qianfan-VL-70B</text>
+  <text x="750" y="390" text-anchor="middle" font-family="Times, serif" font-size="8" fill="#000000">Reasoning • Math • 32K Context</text>
+</svg>
