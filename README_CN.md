@@ -287,7 +287,6 @@ curl 'http://127.0.0.1:8000/v1/chat/completions' \
 
 ## 联系我们
 
-- 联系: dongdaxiang@baidu.com
 - GitHub Issues: [提交问题](https://github.com/baidubce/Qianfan-VL/issues)
 
 ---
