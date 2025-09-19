@@ -5,13 +5,18 @@
 <h1 align="center">Qianfan-VL</h1>
 
 <p align="center">
-  <strong>Domain-Enhanced Multimodal Understanding Model | 3B to 70B Parameters | Document Understanding & OCR Enhancement | Chain-of-Thought Support</strong>
+  <strong>Domain-Enhanced Multimodal Large Language Model</strong><br>
+  <strong>3B to 70B Parameters</strong><br>
+  <strong>Document Understanding & OCR Enhancement</strong><br>
+  <strong>Chain-of-Thought Support</strong>
 </p>
 
 <div align="center">
 
 🤗 **[Hugging Face Models](https://huggingface.co/baidu)** |
 🤖 **[ModelScope Models](https://modelscope.cn/organization/baidu-qianfan)** |
+<img src="docs/images/ACG.png" width="16" height="16">  **[Qianfan ModelBuilder](https://console.bce.baidu.com/qianfan/modelcenter/model/buildIn/list)**
+
 📚 **[Cookbook](https://github.com/baidubce/qianfan-models-cookbook)** |
 📖 **[Tech Blog](https://baidubce.github.io/Qianfan-VL)** |
 📄 **Tech Report [Coming Soon]**
@@ -48,19 +53,19 @@ Provides 3B, 8B, and 70B model variants to meet different scenario requirements 
 ## Technical Advantages
 
 ### 🚀 Multi-Stage Domain Enhancement Continuous Pre-training
-Adopts an innovative four-stage progressive training strategy, from cross-modal alignment to general knowledge injection, then domain-enhanced knowledge injection and post-training alignment, significantly improving domain-specific capabilities while maintaining general abilities. Through carefully designed data ratios and training strategies, it achieves a good balance between general and professional capabilities.
+Adopts an innovative four-stage progressive training strategy, from cross-modal alignment to general knowledge injection, then domain-enhanced knowledge injection and post-training alignment, significantly improving domain-specific capabilities while maintaining general abilities. Through carefully designed data mix and training strategies, it achieves a good balance between general and professional capabilities.
 
 ### 🎯 High-Precision Data Synthesis
 Constructs multi-task data synthesis pipelines covering core tasks such as document recognition, mathematical problem-solving, chart understanding, table recognition, formula recognition, and natural scene OCR. By combining traditional CV models with programmatic generation methods, through refined pipeline design and intermediate process data construction, it achieves efficient production of high-quality training data, significantly improving model generalization in long-tail scenarios.
 
 ### ⚡ Large-Scale Kunlun Chip Cluster Parallel Training
-Based on Baidu's self-developed Kunlun P800 chips, completed training of all model scales through a 5000+ card ultra-large-scale distributed training system. Using 3D parallel training strategy and communication-computation fusion technology, achieved 90%+ cluster scaling efficiency and efficient processing of 3T tokens training data, demonstrating the mature capabilities of domestic AI infrastructure.
+Based on Baidu's self-developed Kunlun P800 chips, completed training of all model scales through a 5000+ chip ultra-large-scale distributed training system. Using 3D parallel training strategy and communication-computation fusion technology, achieved 90%+ cluster scaling efficiency and efficient processing of 3T tokens training data, demonstrating the mature capabilities of domestic AI infrastructure.
 
 ## Performance Metrics
 
 ### General Capability Evaluation
 
-*Note: Bold values indicate top-2 rankings among all models*
+*Note: Bold values indicate top-2 rankings among all models.*
 
 | Benchmark | Qianfan-VL-3B | Qianfan-VL-8B | Qianfan-VL-70B | Intern3-VL-8B | Intern3-VL-78B | Qwen2.5-VL-7B | Qwen2.5-VL-72B |
 |---------|---------------|---------------|----------------|---------------|----------------|---------------|----------------|
@@ -92,9 +97,9 @@ Based on Baidu's self-developed Kunlun P800 chips, completed training of all mod
 
 | Benchmark | Qianfan-VL-8B | Qianfan-VL-70B | Intern3-VL-8B | Intern3-VL-78B | Qwen2.5-VL-7B | Qwen2.5-VL-72B |
 |---------|---------------|----------------|---------------|----------------|---------------|----------------|
-| **Mathvista-mini** | 69.19 | **78.6** | 69.5 | **71.1** | 69.5 | 70.1 |
-| **Math Vision** | **32.82** | **50.29** | 21.48 | 33.48 | 29.61 | 34.8 |
-| **Math Verse** | **48.4** | **61.04** | 30.96 | 43.32 | 43.68 | 49.26 |
+| **MathVista-mini** | 69.19 | **78.6** | 69.5 | **71.1** | 69.5 | 70.1 |
+| **MathVision** | **32.82** | **50.29** | 21.48 | 33.48 | 29.61 | 34.8 |
+| **MathVerse** | **48.4** | **61.04** | 30.96 | 43.32 | 43.68 | 49.26 |
 | **ChartQA Pro** | **50.41** | **52** | 19.38 | 47.92 | 37.32 | 44.43 |
 | **HallusionBench** | **51.72** | **54.52** | 49.7 | 40.5 | 49.2 | 40.2 |
 | **InHouse Dataset A** | **59.87** | **71.78** | 26 | 43.40 | 40.64 | 41.47 |
@@ -285,8 +290,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## Contact Us
 
-- Official Website: [Baidu AI Cloud Qianfan](https://qianfan.cloud.baidu.com)
-- Technical Support: qianfan-support@baidu.com
+- Contact: dongdaxiang@baidu.com
 - GitHub Issues: [Submit Issue](https://github.com/baidubce/Qianfan-VL/issues)
 
 ---
