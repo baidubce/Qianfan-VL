@@ -290,7 +290,6 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## Contact Us
 
-- Contact: dongdaxiang@baidu.com
 - GitHub Issues: [Submit Issue](https://github.com/baidubce/Qianfan-VL/issues)
 
 ---
