@@ -19,7 +19,7 @@
 
 📚 **[Cookbook](https://github.com/baidubce/qianfan-models-cookbook)** |
 📖 **[Tech Blog](https://baidubce.github.io/Qianfan-VL)** |
-📄 **[Tech Report](qianfan_vl_tech_report_20250919.pdf)**
+📄 **[Tech Report](docs/qianfan_vl_report_comp.pdf)**
 
 </div>
 
