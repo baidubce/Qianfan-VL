@@ -79,7 +79,7 @@ Based on Baidu's self-developed Kunlun P800 chips, completed training of all mod
 | **MTVQA_TEST** | 26.5 | 30.14 | **32.18** | 30.30 | 27.62 | 29.08 | **31.48** |
 | **BLINK** | 49.97 | 56.81 | **59.44** | 55.87 | 51.87 | 54.55 | **63.02** |
 | **MMStar** | 57.93 | 64.07 | **69.47** | **68.40** | 66.07 | 61.53 | 66.00 |
-| **POPE** | 85.08 | 86.06 | 88.97 | **90.59** | 88.87 | 85.97 | 83.35 |
+| **POPE** | 85.08 | 86.06 | **88.97** | **90.59** | 88.87 | 85.97 | 83.35 |
 | **RefCOCO (Avg)** | 85.94 | 89.37 | **91.01** | 89.65 | **91.40** | 86.56 | 90.25 |
 
 ### OCR & Document Understanding
@@ -87,9 +87,9 @@ Based on Baidu's self-developed Kunlun P800 chips, completed training of all mod
 | Benchmark | Qianfan-VL-3B | Qianfan-VL-8B | Qianfan-VL-70B | Intern3-VL-8B | Intern3-VL-78B | Qwen2.5-VL-3B | Qwen2.5-VL-7B | Qwen2.5-VL-72B |
 |---------|---------------|---------------|----------------|---------------|----------------|---------------|---------------|----------------|
 | **OCRBench** | 831 | 854 | 873 | **881** | 847 | 810 | **883** | 874 |
-| **AI2D_TEST** | 81.38 | **85.07** | **87.73** | **85.07** | 83.55 | 77.07 | 80.472 | 83.84 |
-| **OCRVQA_TEST** | **66.15** | **68.98** | **74.06** | 39.03 | 35.58 | 69.24 | **71.02** | 66.8 |
-| **TextVQA_VAL** | 80.11 | 82.13 | **84.48** | 82.15 | 83.52 | 79.09 | **84.962** | 83.26 |
+| **AI2D_TEST** | 81.38 | **85.07** | **87.73** | **85.07** | 83.55 | 77.07 | 80.47 | 83.84 |
+| **OCRVQA_TEST** | 66.15 | 68.98 | **74.06** | 39.03 | 35.58 | 69.24 | **71.02** | 66.80 |
+| **TextVQA_VAL** | 80.11 | 82.13 | **84.48** | 82.15 | 83.52 | 79.09 | **84.96** | 83.26 |
 | **DocVQA_VAL** | 90.85 | 93.54 | 94.75 | 92.04 | 83.82 | 92.71 | **94.91** | **95.75** |
 | **ChartQA_TEST** | 81.79 | **87.72** | **89.6** | 85.76 | 82.04 | 83.4 | 86.68 | 87.16 |
 
@@ -97,13 +97,13 @@ Based on Baidu's self-developed Kunlun P800 chips, completed training of all mod
 
 | Benchmark | Qianfan-VL-8B | Qianfan-VL-70B | Intern3-VL-8B | Intern3-VL-78B | Qwen2.5-VL-7B | Qwen2.5-VL-72B |
 |---------|---------------|----------------|---------------|----------------|---------------|----------------|
-| **MathVista-mini** | 69.19 | **78.6** | 69.5 | **71.1** | 69.5 | 70.1 |
-| **MathVision** | **32.82** | **50.29** | 21.48 | 33.48 | 29.61 | 34.8 |
-| **MathVerse** | **48.4** | **61.04** | 30.96 | 43.32 | 43.68 | 49.26 |
-| **ChartQA Pro** | **50.41** | **52** | 19.38 | 47.92 | 37.32 | 44.43 |
-| **HallusionBench** | **51.72** | **54.52** | 49.7 | 40.5 | 49.2 | 40.2 |
-| **InHouse Dataset A** | **59.87** | **71.78** | 26 | 43.40 | 40.64 | 41.47 |
-| **InHouse Dataset B** | **61.33** | **75.6** | 26.81 | 39.7 | 36.25 | 42.65 |
+| **MathVista-mini** | 69.19 | **78.6** | 69.5 | 71.1 | 69.5 | 70.1 |
+| **MathVision** | 32.82 | **50.29** | 21.48 | 33.48 | 29.61 | 34.8 |
+| **MathVerse** | 48.4 | **61.04** | 30.96 | 43.32 | 43.68 | 49.26 |
+| **ChartQA Pro** | 50.41 | **52** | 19.38 | 47.92 | 37.32 | 44.43 |
+| **HallusionBench** | 51.72 | **54.52** | 49.7 | 40.5 | 49.2 | 40.2 |
+| **InHouse Dataset A** | 59.87 | **71.78** | 26 | 43.40 | 40.64 | 41.47 |
+| **InHouse Dataset B** | 61.33 | **75.6** | 26.81 | 39.7 | 36.25 | 42.65 |
 
 ## Quick Start
 
@@ -276,7 +276,7 @@ If you use Qianfan-VL in your research, please cite:
 
 ```bibtex
 @misc{qianfan-vl-2025,
-  title={Qianfan-VL: Domain-Enhanced General Vision-Language Model Series},
+  title={Qianfan-VL: Domain-Enhanced Universal Vision-Language Models},
   author={Baidu Qianfan Team},
   year={2025},
   publisher={Baidu AI Cloud},
