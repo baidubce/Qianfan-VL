@@ -67,7 +67,7 @@ Based on Baidu's self-developed Kunlun P800 chips, completed training of all mod
 
 *Note: Bold values indicate top-2 rankings among all models*
 
-| Benchmark | Qianfan-VL-3B | Qianfan-VL-8B | Qianfan-VL-70B | Intern3-VL-8B | Intern3-VL-78B | Qwen2.5-VL-7B | Qwen2.5-VL-72B |
+| Benchmark | Qianfan-VL-3B | Qianfan-VL-8B | Qianfan-VL-70B | InternVL3-8B | InternVL3-78B | Qwen2.5-VL-7B | Qwen2.5-VL-72B |
 |---------|---------------|---------------|----------------|---------------|----------------|---------------|----------------|
 | **A-Bench_VAL** | 75.65 | 75.72 | **78.1** | 75.86 | 75.86 | 76.49 | **79.22** |
 | **CCBench** | 66.86 | 70.39 | **80.98** | **77.84** | 70.78 | 57.65 | 73.73 |
@@ -84,7 +84,7 @@ Based on Baidu's self-developed Kunlun P800 chips, completed training of all mod
 
 ### OCR & Document Understanding
 
-| Benchmark | Qianfan-VL-3B | Qianfan-VL-8B | Qianfan-VL-70B | Intern3-VL-8B | Intern3-VL-78B | Qwen2.5-VL-3B | Qwen2.5-VL-7B | Qwen2.5-VL-72B |
+| Benchmark | Qianfan-VL-3B | Qianfan-VL-8B | Qianfan-VL-70B | InternVL3-8B | InternVL3-78B | Qwen2.5-VL-3B | Qwen2.5-VL-7B | Qwen2.5-VL-72B |
 |---------|---------------|---------------|----------------|---------------|----------------|---------------|---------------|----------------|
 | **OCRBench** | 831 | 854 | 873 | **881** | 847 | 810 | **883** | 874 |
 | **AI2D_TEST** | 81.38 | **85.07** | **87.73** | **85.07** | 83.55 | 77.07 | 80.47 | 83.84 |
@@ -95,7 +95,7 @@ Based on Baidu's self-developed Kunlun P800 chips, completed training of all mod
 
 ### Mathematical Reasoning
 
-| Benchmark | Qianfan-VL-8B | Qianfan-VL-70B | Intern3-VL-8B | Intern3-VL-78B | Qwen2.5-VL-7B | Qwen2.5-VL-72B |
+| Benchmark | Qianfan-VL-8B | Qianfan-VL-70B | InternVL3-8B | InternVL3-78B | Qwen2.5-VL-7B | Qwen2.5-VL-72B |
 |---------|---------------|----------------|---------------|----------------|---------------|----------------|
 | **MathVista-mini** | 69.19 | **78.6** | 69.5 | 71.1 | 69.5 | 70.1 |
 | **MathVision** | 32.82 | **50.29** | 21.48 | 33.48 | 29.61 | 34.8 |
