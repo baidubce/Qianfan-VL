@@ -1,14 +1,14 @@
 <div align="right">
-  <a href="README_CN.md">简体中文</a> | <b>English</b>
+    <a href="README_CN.md">简体中文</a> | <b>English</b>
 </div>
 
-<h1 align="center">Qianfan-VL</h1>
+<h1 align="center">Qianfan-VL Series</h1>
 
 <p align="center">
-  <strong>Domain-Enhanced Multimodal Understanding Model</strong><br>
-  <strong>3B to 70B Parameters</strong><br>
-  <strong>Document Understanding & OCR Enhancement</strong><br>
-  <strong>Chain-of-Thought Support</strong>
+    <strong>Domain-Enhanced Vision-Language Models for Enterprise</strong><br>
+    <strong>3B to 70B Parameters | OCR Specialist</strong><br>
+    <strong>Document Understanding & OCR Enhancement</strong><br>
+    <strong>Chain-of-Thought Support</strong>
 </p>
 
 <div align="center">
@@ -27,7 +27,18 @@
 
 ## Introduction
 
-Qianfan-VL model series is a general-purpose multimodal model enhanced for enterprise-level multimodal applications. It possesses fundamental general capabilities while offering deep optimization for high-frequency industrial deployment scenarios. Through three core functions, it precisely meets multimodal understanding needs in different scenarios.
+**Qianfan-VL Series** is a family of domain-enhanced vision-language models built for enterprise users who need production-grade visual understanding. The series delivers deep optimization for high-frequency industrial deployment scenarios — from document parsing and OCR to complex visual reasoning — while retaining strong general-purpose multimodal capabilities. Whether deployed at the edge or in the cloud, Qianfan-VL Series provides the visual intelligence backbone that enterprise applications demand.
+
+## 🔥 News
+
+- **[2026/03/18] Qianfan-OCR Released!** — Introducing **Qianfan-OCR**, a 4B end-to-end model that unifies document parsing, layout analysis, table extraction, formula recognition, chart understanding & key information extraction in one single model. No more chaining detection → recognition → LLM. Key innovation: **Layout-as-Thought** — an optional ⟨think⟩ phase where the model reasons about bounding boxes, element types & reading order before generating output. Think "CoT for document layout."
+  - 🏆 **OmniDocBench v1.5:** 93.12 (#1 end-to-end)
+  - 🏆 **OCRBench:** 880 (#1 overall, all models)
+  - 🏆 **KIE avg:** 87.9 (outperforms Gemini-3.1-Pro & Qwen3-VL-235B)
+  - ⚡ **1.024 pages/sec** on a single A100 (W8A8)
+  - 🌍 Supports **192 languages** across Latin, Cyrillic, Arabic, South Asian, Southeast Asian & CJK scripts
+  - Trained on 1,024 Kunlun P800 chips processing 2.85T tokens across 4 stages
+  - 📄 [Paper](https://arxiv.org/abs/2603.13398) | 🤗 [HuggingFace Collection](https://huggingface.co/collections/baidu/qianfan-vl) | 💻 [GitHub](https://github.com/baidubce/Qianfan-OCR)
 
 ## Key Features
 
@@ -45,10 +56,11 @@ Provides 3B, 8B, and 70B model variants to meet different scenario requirements 
 ## Model Specifications
 
 | Model Name | Parameters | Context Length | CoT Support | Application Scenarios | Model Download |
-|---------|--------|-----------|---------|----------|---------|
+|---------|--------|-----------|---------|----------|---------| 
 | **Qianfan-VL-3B** | 3B | 32k | ❌ | Edge real-time scenarios, OCR text recognition | 🤗 **[HuggingFace](https://huggingface.co/baidu/Qianfan-VL-3B)** / 🤖 **[ModelScope](https://modelscope.cn/models/baidu-qianfan/Qianfan-VL-3B)** |
 | **Qianfan-VL-8B** | 8B | 32k | ✅ | Server-side general scenarios, fine-tuning optimization | 🤗 **[HuggingFace](https://huggingface.co/baidu/Qianfan-VL-8B)** / 🤖 **[ModelScope](https://modelscope.cn/models/baidu-qianfan/Qianfan-VL-8B)** |
 | **Qianfan-VL-70B** | 70B | 32k | ✅ | Offline data synthesis, complex reasoning computation | 🤗 **[HuggingFace](https://huggingface.co/baidu/Qianfan-VL-70B)** / 🤖 **[ModelScope](https://modelscope.cn/models/baidu-qianfan/Qianfan-VL-70B)** |
+| **Qianfan-OCR** | 4B | — | ✅ (Layout-as-Thought) | End-to-end document parsing, layout analysis, table extraction, formula recognition, chart understanding, KIE | 💻 **[GitHub](https://github.com/baidubce/Qianfan-OCR)** / 🤗 **[HuggingFace](https://huggingface.co/collections/baidu/qianfan-vl)** |
 
 ## Technical Advantages
 
@@ -108,13 +120,11 @@ Based on Baidu's self-developed Kunlun P800 chips, completed training of all mod
 ## Quick Start
 
 ### Installation
-
 ```bash
 pip install transformers torch torchvision pillow
 ```
 
 ### Using Transformers
-
 ```python
 import torch
 import torchvision.transforms as T
@@ -153,22 +163,18 @@ def find_closest_aspect_ratio(aspect_ratio, target_ratios, width, height, image_
 def dynamic_preprocess(image, min_num=1, max_num=12, image_size=448, use_thumbnail=False):
     orig_width, orig_height = image.size
     aspect_ratio = orig_width / orig_height
-
     # calculate the existing image aspect ratio
     target_ratios = set(
         (i, j) for n in range(min_num, max_num + 1) for i in range(1, n + 1) for j in range(1, n + 1) if
         i * j <= max_num and i * j >= min_num)
     target_ratios = sorted(target_ratios, key=lambda x: x[0] * x[1])
-
     # find the closest aspect ratio to the target
     target_aspect_ratio = find_closest_aspect_ratio(
         aspect_ratio, target_ratios, orig_width, orig_height, image_size)
-
     # calculate the target width and height
     target_width = image_size * target_aspect_ratio[0]
     target_height = image_size * target_aspect_ratio[1]
     blocks = target_aspect_ratio[0] * target_aspect_ratio[1]
-
     # resize the image
     resized_img = image.resize((target_width, target_height))
     processed_images = []
@@ -223,11 +229,9 @@ print(response)
 ```
 
 ### Using vLLM
-
 You can deploy Qianfan-VL using vLLM's official Docker image for high-performance inference with an OpenAI-compatible API:
 
 #### Start vLLM Service
-
 ```bash
 docker run -d --name qianfan-vl \
   --gpus all \
@@ -242,7 +246,6 @@ docker run -d --name qianfan-vl \
 ```
 
 #### Call the API
-
 ```bash
 curl 'http://127.0.0.1:8000/v1/chat/completions' \
   --header 'Content-Type: application/json' \
@@ -276,11 +279,11 @@ If you use Qianfan-VL in your research, please cite:
 
 ```bibtex
 @misc{qianfan-vl-2025,
-  title={Qianfan-VL: Domain-Enhanced Universal Vision-Language Models},
-  author={Baidu Qianfan Team},
-  year={2025},
-  publisher={Baidu AI Cloud},
-  howpublished={\url{https://github.com/baidubce/Qianfan-VL}}
+    title={Qianfan-VL: Domain-Enhanced Universal Vision-Language Models},
+    author={Baidu Qianfan Team},
+    year={2025},
+    publisher={Baidu AI Cloud},
+    howpublished={\url{https://github.com/baidubce/Qianfan-VL}}
 }
 ```
 
@@ -295,5 +298,5 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 ---
 
 <p align="center">
-  <strong>Baidu AI Cloud Qianfan | 2025</strong>
+    <strong>Baidu AI Cloud Qianfan | 2025</strong>
 </p>
