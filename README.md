@@ -39,7 +39,7 @@
   - 🌍 Supports **192 languages** across Latin, Cyrillic, Arabic, South Asian, Southeast Asian & CJK scripts
   - Trained on 1,024 Kunlun P800 chips processing 2.85T tokens across 4 stages
   - 📄 [Paper](https://arxiv.org/abs/2603.13398) | 🤗 [HuggingFace Collection](https://huggingface.co/collections/baidu/qianfan-vl) | 💻 [GitHub](https://github.com/baidubce/Qianfan-OCR)
-- **[2025/09/22] Qianfan-VL 1.0 Released!** — Launching the Qianfan-VL model series (3B / 8B / 70B) with multi-size coverage from edge to cloud, enhanced OCR & document understanding, and Chain-of-Thought reasoning for 8B and 70B variants. 📄 [Tech Report](https://github.com/baidubce/Qianfan-VL/blob/main/docs/qianfan_vl_report_comp.pdf)
+- **[2025/09/22] Qianfan-VL 1.0 Released!** — Launching the Qianfan-VL model series (3B / 8B / 70B) with multi-size coverage from edge to cloud, enhanced OCR & document understanding, and Chain-of-Thought reasoning for 8B and 70B variants. 📄 [Tech Report](https://arxiv.org/abs/2603.13398)
 
 ## Qianfan-VL 1.0 Key Features
 
